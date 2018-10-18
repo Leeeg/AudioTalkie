@@ -8,4 +8,9 @@ import lee.com.audiotalkie.presenter.TalkiePresenter;
  * Coder: lee
  */
 public interface TalkieView extends BaseView<TalkiePresenter>{
+
+    void logAdd(String msg);
+
+    void logClean();
+
 }

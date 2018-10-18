@@ -7,4 +7,17 @@ package lee.com.audiotalkie.presenter;
  */
 public interface TalkiePresenter extends BasePresenter {
 
+    void recordStart();
+
+    void recordStop();
+
+    void trackStart();
+
+    void trackStop();
+
+    void opusEncode();
+
+    void opusDecode();
+
+
 }

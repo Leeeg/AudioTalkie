@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import lee.com.audiotalkie.model.MediaPlayCallback;
 import lee.com.audiotalkie.model.RecordConfig;
+import lee.com.audiotalkie.model.RecordDataCallback;
 
 
 public class MediaManager {
@@ -39,7 +40,6 @@ public class MediaManager {
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_CONFIG, RecordConfig.AUDIO_FORMAT, minBufferSize);
 
         mediaPlayer = new MediaPlayer();
-
         this.filePath = filePath;
     }
 
@@ -96,8 +96,7 @@ public class MediaManager {
                         byte[] tempBuffer = new byte[minBufferSize];
                         while (fileInputStream.available() > 0) {
                             int readCount = fileInputStream.read(tempBuffer);
-                            if (readCount == AudioTrack.ERROR_INVALID_OPERATION ||
-                                    readCount == AudioTrack.ERROR_BAD_VALUE) {
+                            if (readCount == AudioTrack.ERROR_INVALID_OPERATION || readCount == AudioTrack.ERROR_BAD_VALUE) {
                                 continue;
                             }
                             if (readCount != 0 && readCount != -1) {
@@ -162,21 +161,21 @@ public class MediaManager {
     /**
      * 开始录制
      */
-    public void startRecord() {
+    public void startRecord(RecordDataCallback recordDataCallback) {
 //        final int minBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_INHZ, CHANNEL_CONFIG, AUDIO_FORMAT);
 //        audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLE_RATE_INHZ, CHANNEL_CONFIG, AUDIO_FORMAT, minBufferSize);
 
-        stopPlayMusic();
+//        stopPlayMusic();
 
         final byte data[] = new byte[minBufferSize];
-        final File file = new File(filePath, "record.pcm");
-        Log.i(TAG, filePath + "     record.pcm");
-        if (!file.mkdirs()) {
-            Log.e(TAG, "Directory not created");
-        }
-        if (file.exists()) {
-            file.delete();
-        }
+//        final File file = new File(filePath, "record.pcm");
+//        Log.i(TAG, filePath + "     record.pcm");
+//        if (!file.mkdirs()) {
+//            Log.e(TAG, "Directory not created");
+//        }
+//        if (file.exists()) {
+//            file.delete();
+//        }
 
         audioRecord.startRecording();
         isRecording = true;
@@ -185,32 +184,36 @@ public class MediaManager {
             @Override
             public void run() {
 
-                FileOutputStream os = null;
-                try {
-                    os = new FileOutputStream(file);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+//                FileOutputStream os = null;
+//                try {
+//                    os = new FileOutputStream(file);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
 
-                if (null != os) {
+//                if (null != os) {
                     while (isRecording) {
-                        int read = audioRecord.read(data, 0, minBufferSize);
+                        int bufferReadResult = audioRecord.read(data, 0, minBufferSize);
                         // 如果读取音频数据没有出现错误，就将数据写入到文件
-                        if (AudioRecord.ERROR_INVALID_OPERATION != read) {
-                            try {
-                                os.write(data);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                        if (AudioRecord.ERROR_INVALID_OPERATION != bufferReadResult) {
+
+                            Log.i(TAG, "recording ---- bufferReadResult = " + bufferReadResult);
+                            Log.i(TAG, "recording ---- length = " + data.length);
+                            recordDataCallback.data(data);
+//                            try {
+//                                os.write(data);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
                         }
                     }
-                    try {
-                        Log.i(TAG, "run: close file output stream !");
-                        os.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+//                    try {
+//                        Log.i(TAG, "run: close file output stream !");
+//                        os.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
         }).start();
     }
@@ -219,12 +222,12 @@ public class MediaManager {
      * 停止录制
      */
     public void stopRecord() {
-        isRecording = false;
         if (null != audioRecord) {
             audioRecord.stop();
 //            audioRecord.release();
 //            audioRecord = null;
         }
+        isRecording = false;
     }
 
     public void playMusic(String url){
