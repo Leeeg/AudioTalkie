@@ -10,15 +10,26 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+aux_source_directory(src/main/cpp/celt LIB_CELT)
+aux_source_directory(src/main/cpp/silk LIB_SILK)
+aux_source_directory(src/main/cpp/silk/float LIB_SILK_FLOAT)
+aux_source_directory(src/main/cpp/src LIB_SRC)
+include_directories(src/main/cpp/include src/main/cpp/celt src/main/cpp/silk src/main/cpp/silk/float src/main/cpp/src src/main/cpp/build)
+
 add_library( # Sets the name of the library.
              native-lib
-
              # Sets the library as a shared library.
              SHARED
+             src/main/cpp/native-lib.cpp
+             src/main/cpp/build/opus-build.c
+             ${LIB_CELT}
+             ${LIB_SILK}
+             ${LIB_SILK_FLOAT}
+             ${LIB_SRC}
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/native-lib.cpp )
-
+             )
+add_definitions(-DOPUS_BUILD -DSTDC_HEADERS -DVAR_ARRAYS)
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
