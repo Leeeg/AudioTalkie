@@ -29,7 +29,7 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
                     mView.logAdd(msg.obj.toString());
                     break;
                 case 1:
-                    mView.logAdd("recording : data.length = " + ((byte[])msg.obj).length);
+                    mView.logAdd("recording : data.length = " + ((short[])msg.obj).length);
                     break;
             }
         }
@@ -88,7 +88,7 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
     }
 
     @Override
-    public void data(byte[] data) {
+    public void data(short[] data) {
         Message message = handler.obtainMessage();
         message.what = 1;
         message.obj = data;

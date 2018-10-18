@@ -14,7 +14,7 @@ int fs = 48000;
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_opus_com_opus_OpusJni_initOpus(JNIEnv *env, jobject instance) {
+Java_lee_com_audiotalkie_OpusJni_initOpus(JNIEnv *env, jobject instance) {
 
     opusDecoder = initDecoderCreate(fs, channels);
     opusEncoder = initEncoderCreate(fs, channels);
@@ -25,10 +25,9 @@ Java_net_opus_com_opus_OpusJni_initOpus(JNIEnv *env, jobject instance) {
     }
 }
 
-
 extern "C"
 JNIEXPORT jshortArray JNICALL
-Java_net_opus_com_opus_OpusJni_opusEncoder(JNIEnv *env, jclass type, jshortArray buffer_,
+Java_lee_com_audiotalkie_OpusJni_opusEncoder(JNIEnv *env, jclass type, jshortArray buffer_,
                                            jint length) {
     jshort *buffer = env->GetShortArrayElements(buffer_, NULL);
     short outBuffer[length];
@@ -38,9 +37,11 @@ Java_net_opus_com_opus_OpusJni_opusEncoder(JNIEnv *env, jclass type, jshortArray
     env->ReleaseShortArrayElements(buffer_, buffer, 0);
     return shortArray;
 
-}extern "C"
+}
+
+extern "C"
 JNIEXPORT jshortArray JNICALL
-Java_net_opus_com_opus_OpusJni_opusDecode(JNIEnv *env, jclass type, jshortArray buffer_,
+Java_lee_com_audiotalkie_OpusJni_opusDecode(JNIEnv *env, jclass type, jshortArray buffer_,
                                           jint bufferLength, jint pcmLength) {
     jshort *buffer = env->GetShortArrayElements(buffer_, NULL);
     opus_int16 outBufferPc[pcmLength];
@@ -49,9 +50,11 @@ Java_net_opus_com_opus_OpusJni_opusDecode(JNIEnv *env, jclass type, jshortArray 
     env->SetShortArrayRegion(shortArrays, 0, lenPc, outBufferPc);
     env->ReleaseShortArrayElements(buffer_, buffer, 0);
     return shortArrays;
-}extern "C"
+}
+
+extern "C"
 JNIEXPORT jint JNICALL
-Java_net_opus_com_opus_OpusJni_close(JNIEnv *env, jclass type) {
+Java_lee_com_audiotalkie_OpusJni_close(JNIEnv *env, jclass type) {
     close(opusEncoder, opusDecoder);
     return 0;
 }

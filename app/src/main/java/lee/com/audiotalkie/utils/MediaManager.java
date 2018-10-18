@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import lee.com.audiotalkie.OpusJni;
 import lee.com.audiotalkie.model.MediaPlayCallback;
 import lee.com.audiotalkie.model.RecordConfig;
 import lee.com.audiotalkie.model.RecordDataCallback;
@@ -36,10 +37,15 @@ public class MediaManager {
     private MediaPlayCallback callback;
 
     public MediaManager(File filePath) {
-        minBufferSize = AudioRecord.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_CONFIG, RecordConfig.AUDIO_FORMAT);
+//        minBufferSize = AudioRecord.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_CONFIG, RecordConfig.AUDIO_FORMAT);
+        minBufferSize = 480;
         audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_CONFIG, RecordConfig.AUDIO_FORMAT, minBufferSize);
 
         mediaPlayer = new MediaPlayer();
+
+        int state = OpusJni.initOpus();
+        Log.e(TAG, "OPUS init state = " + state);
+
         this.filePath = filePath;
     }
 
@@ -129,6 +135,7 @@ public class MediaManager {
 
     /**
      * 获取保存的pcm文件byte数组
+     *
      * @return
      */
     public byte[] getPcmFile() {
@@ -167,7 +174,7 @@ public class MediaManager {
 
 //        stopPlayMusic();
 
-        final byte data[] = new byte[minBufferSize];
+        final short[] data = new short[minBufferSize];
 //        final File file = new File(filePath, "record.pcm");
 //        Log.i(TAG, filePath + "     record.pcm");
 //        if (!file.mkdirs()) {
@@ -192,21 +199,35 @@ public class MediaManager {
 //                }
 
 //                if (null != os) {
-                    while (isRecording) {
-                        int bufferReadResult = audioRecord.read(data, 0, minBufferSize);
-                        // 如果读取音频数据没有出现错误，就将数据写入到文件
-                        if (AudioRecord.ERROR_INVALID_OPERATION != bufferReadResult) {
+                while (isRecording) {
+                    int bufferReadResult = audioRecord.read(data, 0, minBufferSize);
+                    // 如果读取音频数据没有出现错误，就将数据写入到文件
+                    if (AudioRecord.ERROR_INVALID_OPERATION != bufferReadResult) {
 
-                            Log.i(TAG, "recording ---- bufferReadResult = " + bufferReadResult);
-                            Log.i(TAG, "recording ---- length = " + data.length);
-                            recordDataCallback.data(data);
+                        Log.i(TAG, "recording ---- bufferReadResult = " + bufferReadResult);
+                        Log.i(TAG, "recording ---- length = " + data.length);
+
+                        if (bufferReadResult == minBufferSize){
+                            Log.i(TAG, "recording ---- encode  >>");
+                            short[] encoderShort = OpusJni.opusEncoder(data, bufferReadResult);
+                            Log.i(TAG, "recording ---- encode  << \n");
+                            recordDataCallback.data(encoderShort);
+
+                            Log.i(TAG, "recording ---- decode  >>");
+                            short[] decodeShort = OpusJni.opusDecode(encoderShort, encoderShort.length, bufferReadResult);
+                            Log.i(TAG, "recording ---- decode  << \n");
+                        }
+
+
+
+
 //                            try {
 //                                os.write(data);
 //                            } catch (IOException e) {
 //                                e.printStackTrace();
 //                            }
-                        }
                     }
+                }
 //                    try {
 //                        Log.i(TAG, "run: close file output stream !");
 //                        os.close();
@@ -230,29 +251,29 @@ public class MediaManager {
         isRecording = false;
     }
 
-    public void playMusic(String url){
-        if (null == mediaPlayer){
+    public void playMusic(String url) {
+        if (null == mediaPlayer) {
             mediaPlayer = new MediaPlayer();
-        }else if (mediaPlayer.isPlaying()){
+        } else if (mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
         }
         try {
             mediaPlayer.reset();
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener((mediaPlayer)-> mediaPlayer.start());
-            mediaPlayer.setOnCompletionListener((mediaPlayer)-> callback.onPlayOver());
+            mediaPlayer.setOnPreparedListener((mediaPlayer) -> mediaPlayer.start());
+            mediaPlayer.setOnCompletionListener((mediaPlayer) -> callback.onPlayOver());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void setMediaPlayerCallback(MediaPlayCallback callback){
+    public void setMediaPlayerCallback(MediaPlayCallback callback) {
         this.callback = callback;
     }
 
-    public void stopPlayMusic(){
-        if (null != mediaPlayer && mediaPlayer.isPlaying()){
+    public void stopPlayMusic() {
+        if (null != mediaPlayer && mediaPlayer.isPlaying()) {
             mediaPlayer.stop();
             mediaPlayer.reset();
         }
@@ -261,7 +282,7 @@ public class MediaManager {
     /**
      * 释放资源
      */
-    public void releaseMediaManager(){
+    public void releaseMediaManager() {
         isRecording = false;
         // 释放资源
         if (null != audioRecord) {
@@ -269,7 +290,7 @@ public class MediaManager {
             audioRecord.release();
             audioRecord = null;
         }
-        if (null != mediaPlayer){
+        if (null != mediaPlayer) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
