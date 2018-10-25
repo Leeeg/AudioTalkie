@@ -223,7 +223,7 @@ extern opus_int64    silk_Timer_depth[silk_NUM_TIMERS_MAX];
 
 #if SILK_DEBUG
 /************************************/
-/* write data to file for debugging */
+/* write recordData to file for debugging */
 /************************************/
 /* Example: DEBUG_STORE_DATA(testfile.pcm, &RIN[0], 160*sizeof(opus_int16)); */
 
@@ -231,7 +231,7 @@ extern opus_int64    silk_Timer_depth[silk_NUM_TIMERS_MAX];
 extern FILE *silk_debug_store_fp[ silk_NUM_STORES_MAX ];
 extern int silk_debug_store_count;
 
-/* Faster way of storing the data */
+/* Faster way of storing the recordData */
 #define DEBUG_STORE_DATA( FILE_NAME, DATA_PTR, N_BYTES ) {          \
     static opus_int init = 0, cnt = 0;                              \
     static FILE **fp;                                               \

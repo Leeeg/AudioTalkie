@@ -39,7 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 /* Encodes signs of excitation */
 void silk_encode_signs(
-    ec_enc                      *psRangeEnc,                        /* I/O  Compressor data structure                   */
+    ec_enc                      *psRangeEnc,                        /* I/O  Compressor recordData structure                   */
     const opus_int8             pulses[],                           /* I    pulse signal                                */
     opus_int                    length,                             /* I    length of input                             */
     const opus_int              signalType,                         /* I    Signal type                                 */
@@ -73,7 +73,7 @@ void silk_encode_signs(
 
 /* Decodes signs of excitation */
 void silk_decode_signs(
-    ec_dec                      *psRangeDec,                        /* I/O  Compressor data structure                   */
+    ec_dec                      *psRangeDec,                        /* I/O  Compressor recordData structure                   */
     opus_int16                  pulses[],                           /* I/O  pulse signal                                */
     opus_int                    length,                             /* I    length of input                             */
     const opus_int              signalType,                         /* I    Signal type                                 */

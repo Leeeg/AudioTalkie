@@ -4,7 +4,7 @@
 
 #include "mlp.h"
 
-/* RMS error was 0.280492, seed was 1480478173 */
+/* RMS tcpError was 0.280492, seed was 1480478173 */
 /* 0.005976 0.031821 (0.280494 0.280492) done */
 
 static const float weights[450] = {

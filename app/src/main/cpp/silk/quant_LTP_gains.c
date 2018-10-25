@@ -84,7 +84,7 @@ void silk_quant_LTP_gains(
             silk_VQ_WMat_EC(
                 &temp_idx[ j ],         /* O    index of best codebook vector                           */
                 &res_nrg_Q15_subfr,     /* O    residual energy                                         */
-                &rate_dist_Q7_subfr,    /* O    best weighted quantization error + mu * rate            */
+                &rate_dist_Q7_subfr,    /* O    best weighted quantization tcpError + mu * rate            */
                 &gain_Q7,               /* O    sum of absolute LTP coefficients                        */
                 XX_Q17_ptr,             /* I    correlation matrix                                      */
                 xX_Q17_ptr,             /* I    correlation vector                                      */

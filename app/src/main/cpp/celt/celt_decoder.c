@@ -670,7 +670,7 @@ static void celt_decode_lost(CELTDecoder * OPUS_RESTRICT st, int N, int LM)
          }
 
          /* Move the decoder memory one frame to the left to give us room to
-            add the data for the new frame. We ignore the overlap that extends
+            add the recordData for the new frame. We ignore the overlap that extends
             past the end of the buffer, because we aren't going to use it. */
          OPUS_MOVE(buf, buf+N, DECODE_BUFFER_SIZE-N);
 
@@ -848,9 +848,9 @@ int celt_decode_with_ec(CELTDecoder * OPUS_RESTRICT st, const unsigned char *dat
    backgroundLogE = oldLogE2  + 2*nbEBands;
 
 #ifdef CUSTOM_MODES
-   if (st->signalling && data!=NULL)
+   if (st->signalling && recordData!=NULL)
    {
-      int data0=data[0];
+      int data0=recordData[0];
       /* Convert "standard mode" to Opus header */
       if (mode->Fs==48000 && mode->shortMdctSize==120)
       {
@@ -861,7 +861,7 @@ int celt_decode_with_ec(CELTDecoder * OPUS_RESTRICT st, const unsigned char *dat
       st->end = end = IMAX(1, mode->effEBands-2*(data0>>5));
       LM = (data0>>3)&0x3;
       C = 1 + ((data0>>2)&0x1);
-      data++;
+      recordData++;
       len--;
       if (LM>mode->maxLM)
          return OPUS_INVALID_PACKET;
@@ -1150,13 +1150,13 @@ int celt_decode_with_ec(CELTDecoder * OPUS_RESTRICT st, const unsigned char *dat
 #ifdef CUSTOM_MODES
 
 #ifdef FIXED_POINT
-int opus_custom_decode(CELTDecoder * OPUS_RESTRICT st, const unsigned char *data, int len, opus_int16 * OPUS_RESTRICT pcm, int frame_size)
+int opus_custom_decode(CELTDecoder * OPUS_RESTRICT st, const unsigned char *recordData, int len, opus_int16 * OPUS_RESTRICT pcm, int frame_size)
 {
-   return celt_decode_with_ec(st, data, len, pcm, frame_size, NULL, 0);
+   return celt_decode_with_ec(st, recordData, len, pcm, frame_size, NULL, 0);
 }
 
 #ifndef DISABLE_FLOAT_API
-int opus_custom_decode_float(CELTDecoder * OPUS_RESTRICT st, const unsigned char *data, int len, float * OPUS_RESTRICT pcm, int frame_size)
+int opus_custom_decode_float(CELTDecoder * OPUS_RESTRICT st, const unsigned char *recordData, int len, float * OPUS_RESTRICT pcm, int frame_size)
 {
    int j, ret, C, N;
    VARDECL(opus_int16, out);
@@ -1169,7 +1169,7 @@ int opus_custom_decode_float(CELTDecoder * OPUS_RESTRICT st, const unsigned char
    N = frame_size;
 
    ALLOC(out, C*N, opus_int16);
-   ret=celt_decode_with_ec(st, data, len, out, frame_size, NULL, 0);
+   ret=celt_decode_with_ec(st, recordData, len, out, frame_size, NULL, 0);
    if (ret>0)
       for (j=0;j<C*ret;j++)
          pcm[j]=out[j]*(1.f/32768.f);
@@ -1181,12 +1181,12 @@ int opus_custom_decode_float(CELTDecoder * OPUS_RESTRICT st, const unsigned char
 
 #else
 
-int opus_custom_decode_float(CELTDecoder * OPUS_RESTRICT st, const unsigned char *data, int len, float * OPUS_RESTRICT pcm, int frame_size)
+int opus_custom_decode_float(CELTDecoder * OPUS_RESTRICT st, const unsigned char *recordData, int len, float * OPUS_RESTRICT pcm, int frame_size)
 {
-   return celt_decode_with_ec(st, data, len, pcm, frame_size, NULL, 0);
+   return celt_decode_with_ec(st, recordData, len, pcm, frame_size, NULL, 0);
 }
 
-int opus_custom_decode(CELTDecoder * OPUS_RESTRICT st, const unsigned char *data, int len, opus_int16 * OPUS_RESTRICT pcm, int frame_size)
+int opus_custom_decode(CELTDecoder * OPUS_RESTRICT st, const unsigned char *recordData, int len, opus_int16 * OPUS_RESTRICT pcm, int frame_size)
 {
    int j, ret, C, N;
    VARDECL(celt_sig, out);
@@ -1199,7 +1199,7 @@ int opus_custom_decode(CELTDecoder * OPUS_RESTRICT st, const unsigned char *data
    N = frame_size;
    ALLOC(out, C*N, celt_sig);
 
-   ret=celt_decode_with_ec(st, data, len, out, frame_size, NULL, 0);
+   ret=celt_decode_with_ec(st, recordData, len, out, frame_size, NULL, 0);
 
    if (ret>0)
       for (j=0;j<C*ret;j++)

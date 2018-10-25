@@ -36,7 +36,7 @@ public class TalkieFragment extends Fragment implements TalkieView {
     private RecyclerView recyclerView;
     private LogAdapter logAdapter;
     private List<String> logList = new ArrayList<>();
-    private Button recordStart, recordStop;
+    private Button recordStart, recordStop, socketConnect, socketClose;
 
 
     public static TalkieFragment newInstance(String param1, String param2) {
@@ -73,18 +73,32 @@ public class TalkieFragment extends Fragment implements TalkieView {
 
         recordStart = rootView.findViewById(R.id.bt_record_start);
         recordStop = rootView.findViewById(R.id.bt_record_stop);
+        socketConnect = rootView.findViewById(R.id.bt_tcp_connect);
+        socketClose = rootView.findViewById(R.id.bt_tcp_close);
+        socketClose.setEnabled(false);
         recordStop.setEnabled(false);
-        recordStart.setOnClickListener((v)->{
+        recordStart.setOnClickListener((v) -> {
             recordStart.setEnabled(false);
             presenter.recordStart();
             recordStop.setEnabled(true);
         });
-        recordStop.setOnClickListener((v)->{
+        recordStop.setOnClickListener((v) -> {
             recordStop.setEnabled(false);
             presenter.recordStop();
             recordStart.setEnabled(true);
         });
-
+        socketConnect.setOnClickListener((v) -> {
+            socketConnect.setEnabled(false);
+            presenter.socketInit();
+            socketClose.setEnabled(true);
+        });
+        socketClose.setOnClickListener((v) -> {
+            socketConnect.setEnabled(true);
+            presenter.TcpClose();
+            socketClose.setEnabled(false);
+        });
+        rootView.findViewById(R.id.bt_tcp_test).setOnClickListener((v) -> presenter.TcpTest());
+        rootView.findViewById(R.id.bt_udp_test).setOnClickListener((v) -> presenter.UdpTest());
 
         return rootView;
     }
@@ -128,6 +142,12 @@ public class TalkieFragment extends Fragment implements TalkieView {
     public void logClean() {
         logList.clear();
         logAdapter.updateData(logList);
+    }
+
+    @Override
+    public void socketReset() {
+        socketConnect.setEnabled(true);
+        socketClose.setEnabled(false);
     }
 
     /**

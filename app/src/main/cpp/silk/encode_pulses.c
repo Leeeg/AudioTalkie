@@ -58,7 +58,7 @@ static OPUS_INLINE opus_int combine_and_check(    /* return ok                  
 
 /* Encode quantization indices of excitation */
 void silk_encode_pulses(
-    ec_enc                      *psRangeEnc,                    /* I/O  compressor data structure                   */
+    ec_enc                      *psRangeEnc,                    /* I/O  compressor recordData structure                   */
     const opus_int              signalType,                     /* I    Signal type                                 */
     const opus_int              quantOffsetType,                /* I    quantOffsetType                             */
     opus_int8                   pulses[],                       /* I    quantization indices                        */

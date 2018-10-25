@@ -146,7 +146,7 @@ OPUS_CUSTOM_NOSTATIC int opus_custom_encoder_get_size(const CELTMode *mode, int 
 }
 
 #ifdef CUSTOM_MODES
-CELTEncoder *opus_custom_encoder_create(const CELTMode *mode, int channels, int *error)
+CELTEncoder *opus_custom_encoder_create(const CELTMode *mode, int channels, int *tcpError)
 {
    int ret;
    CELTEncoder *st = (CELTEncoder *)opus_alloc(opus_custom_encoder_get_size(mode, channels));
@@ -157,8 +157,8 @@ CELTEncoder *opus_custom_encoder_create(const CELTMode *mode, int channels, int 
       opus_custom_encoder_destroy(st);
       st = NULL;
    }
-   if (error)
-      *error = ret;
+   if (tcpError)
+      *tcpError = ret;
    return st;
 }
 #endif /* CUSTOM_MODES */
@@ -242,7 +242,7 @@ static int transient_analysis(const opus_val32 * OPUS_RESTRICT in, int len, int 
 #else
    opus_val16 forward_decay = QCONST16(.0625f,15);
 #endif
-   /* Table of 6*64/x, trained on real data to minimize the average error */
+   /* Table of 6*64/x, trained on real recordData to minimize the average tcpError */
    static const unsigned char inv_table[128] = {
          255,255,156,110, 86, 70, 59, 51, 45, 40, 37, 33, 31, 28, 26, 25,
           23, 22, 21, 20, 19, 18, 17, 16, 16, 15, 15, 14, 13, 13, 12, 12,
@@ -360,7 +360,7 @@ static int transient_analysis(const opus_val32 * OPUS_RESTRICT in, int len, int 
       /* Inverse of the mean energy in Q15+6 */
       norm = SHL32(EXTEND32(len2),6+14)/ADD32(EPSILON,SHR32(mean,1));
       /* Compute harmonic mean discarding the unreliable boundaries
-         The data is smooth, so we only take 1/4th of the samples */
+         The recordData is smooth, so we only take 1/4th of the samples */
       unmask=0;
       for (i=12;i<len2-5;i+=4)
       {
@@ -1840,7 +1840,7 @@ int celt_encode_with_ec(CELTEncoder * OPUS_RESTRICT st, const opus_val16 * pcm, 
       for (i=start;i<end;i++)
       {
          /* When the energy is stable, slightly bias energy quantization towards
-            the previous error to make the gain more stable (a constant offset is
+            the previous tcpError to make the gain more stable (a constant offset is
             better than fluctuations). */
          if (ABS32(SUB32(bandLogE[i+c*nbEBands], oldBandE[i+c*nbEBands])) < QCONST16(2.f, DB_SHIFT))
          {

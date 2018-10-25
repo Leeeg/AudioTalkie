@@ -180,7 +180,7 @@ opus_int silk_resampler(
 {
     opus_int nSamples;
 
-    /* Need at least 1 ms of input data */
+    /* Need at least 1 ms of input recordData */
     silk_assert( inLen >= S->Fs_in_kHz );
     /* Delay can't exceed the 1 ms of buffering */
     silk_assert( S->inputDelay <= S->Fs_in_kHz );

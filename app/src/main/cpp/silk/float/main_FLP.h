@@ -63,7 +63,7 @@ void silk_encode_do_VAD_FLP(
 opus_int silk_encode_frame_FLP(
     silk_encoder_state_FLP          *psEnc,                             /* I/O  Encoder state FLP                           */
     opus_int32                      *pnBytesOut,                        /* O    Number of payload bytes;                    */
-    ec_enc                          *psRangeEnc,                        /* I/O  compressor data structure                   */
+    ec_enc                          *psRangeEnc,                        /* I/O  compressor recordData structure                   */
     opus_int                        condCoding,                         /* I    The type of conditional coding to use       */
     opus_int                        maxBits,                            /* I    If > 0: maximum number of output bits       */
     opus_int                        useCBR                              /* I    Flag to force constant-bitrate operation    */
@@ -98,7 +98,7 @@ void silk_noise_shape_analysis_FLP(
 /* Autocorrelations for a warped frequency axis */
 void silk_warped_autocorrelation_FLP(
     silk_float                      *corr,                              /* O    Result [order + 1]                          */
-    const silk_float                *input,                             /* I    Input data to correlate                     */
+    const silk_float                *input,                             /* I    Input recordData to correlate                     */
     const silk_float                warping,                            /* I    Warping coefficient                         */
     const opus_int                  length,                             /* I    Length of input                             */
     const opus_int                  order                               /* I    Correlation order (even)                    */

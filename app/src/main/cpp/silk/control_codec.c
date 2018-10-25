@@ -102,7 +102,7 @@ opus_int silk_control_encoder(
        fs_kHz = force_fs_kHz;
     }
     /********************************************/
-    /* Prepare resampler and buffered data      */
+    /* Prepare resampler and buffered recordData      */
     /********************************************/
     ret += silk_setup_resamplers( psEnc, fs_kHz );
 
@@ -167,21 +167,21 @@ static opus_int silk_setup_resamplers(
             silk_float2short_array( x_bufFIX, psEnc->x_buf, old_buf_samples );
 #endif
 
-            /* Initialize resampler for temporary resampling of x_buf data to API_fs_Hz */
+            /* Initialize resampler for temporary resampling of x_buf recordData to API_fs_Hz */
             ALLOC( temp_resampler_state, 1, silk_resampler_state_struct );
             ret += silk_resampler_init( temp_resampler_state, silk_SMULBB( psEnc->sCmn.fs_kHz, 1000 ), psEnc->sCmn.API_fs_Hz, 0 );
 
             /* Calculate number of samples to temporarily upsample */
             api_buf_samples = buf_length_ms * silk_DIV32_16( psEnc->sCmn.API_fs_Hz, 1000 );
 
-            /* Temporary resampling of x_buf data to API_fs_Hz */
+            /* Temporary resampling of x_buf recordData to API_fs_Hz */
             ALLOC( x_buf_API_fs_Hz, api_buf_samples, opus_int16 );
             ret += silk_resampler( temp_resampler_state, x_buf_API_fs_Hz, x_bufFIX, old_buf_samples );
 
             /* Initialize the resampler for enc_API.c preparing resampling from API_fs_Hz to fs_kHz */
             ret += silk_resampler_init( &psEnc->sCmn.resampler_state, psEnc->sCmn.API_fs_Hz, silk_SMULBB( fs_kHz, 1000 ), 1 );
 
-            /* Correct resampler state by resampling buffered data from API_fs_Hz to fs_kHz */
+            /* Correct resampler state by resampling buffered recordData from API_fs_Hz to fs_kHz */
             ret += silk_resampler( &psEnc->sCmn.resampler_state, x_bufFIX, x_buf_API_fs_Hz, api_buf_samples );
 
 #ifndef FIXED_POINT

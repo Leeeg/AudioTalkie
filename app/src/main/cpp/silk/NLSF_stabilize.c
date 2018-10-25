@@ -43,7 +43,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* Constant Definitions */
 #define MAX_LOOPS        20
 
-/* NLSF stabilizer, for a single input data vector */
+/* NLSF stabilizer, for a single input recordData vector */
 void silk_NLSF_stabilize(
           opus_int16            *NLSF_Q15,          /* I/O   Unstable/stabilized normalized LSF vector in Q15 [L]       */
     const opus_int16            *NDeltaMin_Q15,     /* I     Min distance vector, NDeltaMin_Q15[L] must be >= 1 [L+1]   */

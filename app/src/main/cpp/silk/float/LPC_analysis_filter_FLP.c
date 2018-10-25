@@ -72,7 +72,7 @@ static OPUS_INLINE void silk_LPC_analysis_filter16_FLP(
                    s_ptr[ -14 ] * PredCoef[ 14 ] +
                    s_ptr[ -15 ] * PredCoef[ 15 ];
 
-        /* prediction error */
+        /* prediction tcpError */
         r_LPC[ix] = s_ptr[ 1 ] - LPC_pred;
     }
 }
@@ -106,7 +106,7 @@ static OPUS_INLINE void silk_LPC_analysis_filter12_FLP(
                    s_ptr[ -10 ] * PredCoef[ 10 ] +
                    s_ptr[ -11 ] * PredCoef[ 11 ];
 
-        /* prediction error */
+        /* prediction tcpError */
         r_LPC[ix] = s_ptr[ 1 ] - LPC_pred;
     }
 }
@@ -138,7 +138,7 @@ static OPUS_INLINE void silk_LPC_analysis_filter10_FLP(
                    s_ptr[ -8 ] * PredCoef[ 8 ]  +
                    s_ptr[ -9 ] * PredCoef[ 9 ];
 
-        /* prediction error */
+        /* prediction tcpError */
         r_LPC[ix] = s_ptr[ 1 ] - LPC_pred;
     }
 }
@@ -168,7 +168,7 @@ static OPUS_INLINE void silk_LPC_analysis_filter8_FLP(
                    s_ptr[ -6 ] * PredCoef[ 6 ]  +
                    s_ptr[ -7 ] * PredCoef[ 7 ];
 
-        /* prediction error */
+        /* prediction tcpError */
         r_LPC[ix] = s_ptr[ 1 ] - LPC_pred;
     }
 }
@@ -196,7 +196,7 @@ static OPUS_INLINE void silk_LPC_analysis_filter6_FLP(
                    s_ptr[ -4 ] * PredCoef[ 4 ]  +
                    s_ptr[ -5 ] * PredCoef[ 5 ];
 
-        /* prediction error */
+        /* prediction tcpError */
         r_LPC[ix] = s_ptr[ 1 ] - LPC_pred;
     }
 }

@@ -48,7 +48,7 @@ typedef struct {
 /* Decoder functions */
 /*********************/
 
-opus_int silk_Get_Decoder_Size(                         /* O    Returns error code                              */
+opus_int silk_Get_Decoder_Size(                         /* O    Returns tcpError code                              */
     opus_int                        *decSizeBytes       /* O    Number of bytes in SILK decoder state           */
 )
 {
@@ -60,7 +60,7 @@ opus_int silk_Get_Decoder_Size(                         /* O    Returns error co
 }
 
 /* Reset decoder state */
-opus_int silk_InitDecoder(                              /* O    Returns error code                              */
+opus_int silk_InitDecoder(                              /* O    Returns tcpError code                              */
     void                            *decState           /* I/O  State                                           */
 )
 {
@@ -78,12 +78,12 @@ opus_int silk_InitDecoder(                              /* O    Returns error co
 }
 
 /* Decode a frame */
-opus_int silk_Decode(                                   /* O    Returns error code                              */
+opus_int silk_Decode(                                   /* O    Returns tcpError code                              */
     void*                           decState,           /* I/O  State                                           */
     silk_DecControlStruct*          decControl,         /* I/O  Control Structure                               */
     opus_int                        lostFlag,           /* I    0: no loss, 1 loss, 2 decode fec                */
     opus_int                        newPacketFlag,      /* I    Indicates first decoder call for this packet    */
-    ec_dec                          *psRangeDec,        /* I/O  Compressor data structure                       */
+    ec_dec                          *psRangeDec,        /* I/O  Compressor recordData structure                       */
     opus_int16                      *samplesOut,        /* O    Decoded output speech vector                    */
     opus_int32                      *nSamplesOut,       /* O    Number of samples decoded                       */
     int                             arch                /* I    Run-time architecture                           */
@@ -196,7 +196,7 @@ opus_int silk_Decode(                                   /* O    Returns error co
         }
 
         if( lostFlag == FLAG_DECODE_NORMAL ) {
-            /* Regular decoding: skip all LBRR data */
+            /* Regular decoding: skip all LBRR recordData */
             for( i = 0; i < channel_state[ 0 ].nFramesPerPacket; i++ ) {
                 for( n = 0; n < decControl->nChannelsInternal; n++ ) {
                     if( channel_state[ n ].LBRR_flags[ i ] ) {
@@ -230,7 +230,7 @@ opus_int silk_Decode(                                   /* O    Returns error co
             ( lostFlag == FLAG_DECODE_LBRR && channel_state[ 0 ].LBRR_flags[ channel_state[ 0 ].nFramesDecoded ] == 1 ) )
         {
             silk_stereo_decode_pred( psRangeDec, MS_pred_Q13 );
-            /* For LBRR data, decode mid-only flag only if side-channel's LBRR flag is false */
+            /* For LBRR recordData, decode mid-only flag only if side-channel's LBRR flag is false */
             if( ( lostFlag == FLAG_DECODE_NORMAL && channel_state[ 1 ].VAD_flags[ channel_state[ 0 ].nFramesDecoded ] == 0 ) ||
                 ( lostFlag == FLAG_DECODE_LBRR && channel_state[ 1 ].LBRR_flags[ channel_state[ 0 ].nFramesDecoded ] == 0 ) )
             {
@@ -387,7 +387,7 @@ opus_int silk_Decode(                                   /* O    Returns error co
 #if 0
 /* Getting table of contents for a packet */
 opus_int silk_get_TOC(
-    const opus_uint8                *payload,           /* I    Payload data                                */
+    const opus_uint8                *payload,           /* I    Payload recordData                                */
     const opus_int                  nBytesIn,           /* I    Number of input bytes                       */
     const opus_int                  nFramesPerPayload,  /* I    Number of SILK frames per payload           */
     silk_TOC_struct                 *Silk_TOC           /* O    Type of content                             */

@@ -119,7 +119,7 @@ void silk_biquad_alt_stride2_c(
     const opus_int32            len                 /* I     signal length (must be even)                               */
 );
 
-/* Variable order MA prediction error filter. */
+/* Variable order MA prediction tcpError filter. */
 void silk_LPC_analysis_filter(
     opus_int16                  *out,               /* O    Output signal                                               */
     const opus_int16            *in,                /* I    Input signal                                                */
@@ -245,7 +245,7 @@ void silk_apply_sine_window(
 void silk_autocorr(
     opus_int32                  *results,           /* O    Result (length correlationCount)                            */
     opus_int                    *scale,             /* O    Scaling of the correlation vector                           */
-    const opus_int16            *inputData,         /* I    Input data to correlate                                     */
+    const opus_int16            *inputData,         /* I    Input recordData to correlate                                     */
     const opus_int              inputDataSize,      /* I    Length of input                                             */
     const opus_int              correlationCount,   /* I    Number of correlation taps to compute                       */
     int                         arch                /* I    Run-time architecture                                       */
@@ -318,7 +318,7 @@ void silk_insertion_sort_increasing_all_values_int16(
      const opus_int             L                   /* I     Vector length                                              */
 );
 
-/* NLSF stabilizer, for a single input data vector */
+/* NLSF stabilizer, for a single input recordData vector */
 void silk_NLSF_stabilize(
           opus_int16            *NLSF_Q15,          /* I/O   Unstable/stabilized normalized LSF vector in Q15 [L]       */
     const opus_int16            *NDeltaMin_Q15,     /* I     Min distance vector, NDeltaMin_Q15[L] must be >= 1 [L+1]   */

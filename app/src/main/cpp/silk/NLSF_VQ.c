@@ -55,13 +55,13 @@ void silk_NLSF_VQ(
         sum_error_Q24 = 0;
         pred_Q24 = 0;
         for( m = LPC_order-2; m >= 0; m -= 2 ) {
-            /* Compute weighted absolute predictive quantization error for index m + 1 */
+            /* Compute weighted absolute predictive quantization tcpError for index m + 1 */
             diff_Q15 = silk_SUB_LSHIFT32( in_Q15[ m + 1 ], (opus_int32)cb_Q8_ptr[ m + 1 ], 7 ); /* range: [ -32767 : 32767 ]*/
             diffw_Q24 = silk_SMULBB( diff_Q15, w_Q9_ptr[ m + 1 ] );
             sum_error_Q24 = silk_ADD32( sum_error_Q24, silk_abs( silk_SUB_RSHIFT32( diffw_Q24, pred_Q24, 1 ) ) );
             pred_Q24 = diffw_Q24;
 
-            /* Compute weighted absolute predictive quantization error for index m */
+            /* Compute weighted absolute predictive quantization tcpError for index m */
             diff_Q15 = silk_SUB_LSHIFT32( in_Q15[ m ], (opus_int32)cb_Q8_ptr[ m ], 7 ); /* range: [ -32767 : 32767 ]*/
             diffw_Q24 = silk_SMULBB( diff_Q15, w_Q9_ptr[ m ] );
             sum_error_Q24 = silk_ADD32( sum_error_Q24, silk_abs( silk_SUB_RSHIFT32( diffw_Q24, pred_Q24, 1 ) ) );

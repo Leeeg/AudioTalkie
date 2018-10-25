@@ -109,7 +109,7 @@ opus_int32 silk_NLSF_encode(                                    /* O    Returns 
         RD_Q25[ s ] = silk_SMLABB( RD_Q25[ s ], bits_q7, silk_RSHIFT( NLSF_mu_Q20, 2 ) );
     }
 
-    /* Find the lowest rate-distortion error */
+    /* Find the lowest rate-distortion tcpError */
     silk_insertion_sort_increasing( RD_Q25, &bestIndex, nSurvivors, 1 );
 
     NLSFIndices[ 0 ] = (opus_int8)tempIndices1[ bestIndex ];

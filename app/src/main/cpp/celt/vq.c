@@ -290,7 +290,7 @@ opus_val16 op_pvq_search_c(celt_norm *X, int *iy, int K, int N, int arch)
             we can do it without any division */
          /* OPT: It's not clear whether a cmov is faster than a branch here
             since the condition is more often false than true and using
-            a cmov introduces data dependencies across iterations. The optimal
+            a cmov introduces recordData dependencies across iterations. The optimal
             choice may be architecture-dependent. */
          if (opus_unlikely(MULT16_16(best_den, Rxy) > MULT16_16(Ryy, best_num)))
          {

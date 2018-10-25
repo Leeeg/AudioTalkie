@@ -7,6 +7,6 @@ package lee.com.audiotalkie.model;
  */
 public interface RecordDataCallback {
 
-    void data(short[] data);
+    void recordData(short[] data);
 
 }

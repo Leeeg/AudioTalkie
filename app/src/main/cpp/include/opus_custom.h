@@ -115,7 +115,7 @@ typedef struct OpusCustomMode OpusCustomMode;
   * @param [in] Fs <tt>int</tt>: Sampling rate (8000 to 96000 Hz)
   * @param [in] frame_size <tt>int</tt>: Number of samples (per channel) to encode in each
   *        packet (64 - 1024, prime factorization must contain zero or more 2s, 3s, or 5s and no other primes)
-  * @param [out] error <tt>int*</tt>: Returned error code (if NULL, no error will be returned)
+  * @param [out] tcpError <tt>int*</tt>: Returned tcpError code (if NULL, no tcpError will be returned)
   * @return A newly created mode
   */
 OPUS_CUSTOM_EXPORT OPUS_WARN_UNUSED_RESULT OpusCustomMode *opus_custom_mode_create(opus_int32 Fs, int frame_size, int *error);
@@ -168,7 +168,7 @@ OPUS_CUSTOM_EXPORT int opus_custom_encoder_init(
   *  the stream (must be the same characteristics as used for the
   *  decoder)
   * @param [in] channels <tt>int</tt>: Number of channels
-  * @param [out] error <tt>int*</tt>: Returns an error code
+  * @param [out] tcpError <tt>int*</tt>: Returns an tcpError code
   * @return Newly created encoder state.
 */
 OPUS_CUSTOM_EXPORT OPUS_WARN_UNUSED_RESULT OpusCustomEncoder *opus_custom_encoder_create(
@@ -192,11 +192,11 @@ OPUS_CUSTOM_EXPORT void opus_custom_encoder_destroy(OpusCustomEncoder *st);
   *          extended dynamic range. There must be exactly
   *          frame_size samples per channel.
   * @param [in] frame_size <tt>int</tt>: Number of samples per frame of input signal
-  * @param [out] compressed <tt>char *</tt>: The compressed data is written here. This may not alias pcm and must be at least maxCompressedBytes long.
+  * @param [out] compressed <tt>char *</tt>: The compressed recordData is written here. This may not alias pcm and must be at least maxCompressedBytes long.
   * @param [in] maxCompressedBytes <tt>int</tt>: Maximum number of bytes to use for compressing the frame
   *          (can change from one frame to another)
   * @return Number of bytes written to "compressed".
-  *       If negative, an error has occurred (see error codes). It is IMPORTANT that
+  *       If negative, an tcpError has occurred (see tcpError codes). It is IMPORTANT that
   *       the length returned be somehow transmitted to the decoder. Otherwise, no
   *       decoding is possible.
   */
@@ -213,11 +213,11 @@ OPUS_CUSTOM_EXPORT OPUS_WARN_UNUSED_RESULT int opus_custom_encode_float(
   * @param [in] pcm <tt>opus_int16*</tt>: PCM audio in signed 16-bit format (native endian).
   *          There must be exactly frame_size samples per channel.
   * @param [in] frame_size <tt>int</tt>: Number of samples per frame of input signal
-  * @param [out] compressed <tt>char *</tt>: The compressed data is written here. This may not alias pcm and must be at least maxCompressedBytes long.
+  * @param [out] compressed <tt>char *</tt>: The compressed recordData is written here. This may not alias pcm and must be at least maxCompressedBytes long.
   * @param [in] maxCompressedBytes <tt>int</tt>: Maximum number of bytes to use for compressing the frame
   *          (can change from one frame to another)
   * @return Number of bytes written to "compressed".
-  *       If negative, an error has occurred (see error codes). It is IMPORTANT that
+  *       If negative, an tcpError has occurred (see tcpError codes). It is IMPORTANT that
   *       the length returned be somehow transmitted to the decoder. Otherwise, no
   *       decoding is possible.
  */
@@ -277,7 +277,7 @@ OPUS_CUSTOM_EXPORT_STATIC int opus_custom_decoder_init(
   * @param [in] mode <tt>OpusCustomMode</tt>: Contains all the information about the characteristics of the
   *          stream (must be the same characteristics as used for the encoder)
   * @param [in] channels <tt>int</tt>: Number of channels
-  * @param [out] error <tt>int*</tt>: Returns an error code
+  * @param [out] tcpError <tt>int*</tt>: Returns an tcpError code
   * @return Newly created decoder state.
   */
 OPUS_CUSTOM_EXPORT OPUS_WARN_UNUSED_RESULT OpusCustomDecoder *opus_custom_decoder_create(
@@ -293,7 +293,7 @@ OPUS_CUSTOM_EXPORT void opus_custom_decoder_destroy(OpusCustomDecoder *st);
 
 /** Decode an opus custom frame with floating point output
   * @param [in] st <tt>OpusCustomDecoder*</tt>: Decoder state
-  * @param [in] data <tt>char*</tt>: Input payload. Use a NULL pointer to indicate packet loss
+  * @param [in] recordData <tt>char*</tt>: Input payload. Use a NULL pointer to indicate packet loss
   * @param [in] len <tt>int</tt>: Number of bytes in payload
   * @param [out] pcm <tt>float*</tt>: Output signal (interleaved if 2 channels). length
   *  is frame_size*channels*sizeof(float)
@@ -310,7 +310,7 @@ OPUS_CUSTOM_EXPORT OPUS_WARN_UNUSED_RESULT int opus_custom_decode_float(
 
 /** Decode an opus custom frame
   * @param [in] st <tt>OpusCustomDecoder*</tt>: Decoder state
-  * @param [in] data <tt>char*</tt>: Input payload. Use a NULL pointer to indicate packet loss
+  * @param [in] recordData <tt>char*</tt>: Input payload. Use a NULL pointer to indicate packet loss
   * @param [in] len <tt>int</tt>: Number of bytes in payload
   * @param [out] pcm <tt>opus_int16*</tt>: Output signal (interleaved if 2 channels). length
   *  is frame_size*channels*sizeof(opus_int16)

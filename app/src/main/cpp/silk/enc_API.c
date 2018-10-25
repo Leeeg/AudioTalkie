@@ -44,7 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /***************************************/
 /* Read control structure from encoder */
 /***************************************/
-static opus_int silk_QueryEncoder(                      /* O    Returns error code                              */
+static opus_int silk_QueryEncoder(                      /* O    Returns tcpError code                              */
     const void                      *encState,          /* I    State                                           */
     silk_EncControlStruct           *encStatus          /* O    Encoder Status                                  */
 );
@@ -53,7 +53,7 @@ static opus_int silk_QueryEncoder(                      /* O    Returns error co
 /* Encoder functions                    */
 /****************************************/
 
-opus_int silk_Get_Encoder_Size(                         /* O    Returns error code                              */
+opus_int silk_Get_Encoder_Size(                         /* O    Returns tcpError code                              */
     opus_int                        *encSizeBytes       /* O    Number of bytes in SILK encoder state           */
 )
 {
@@ -67,7 +67,7 @@ opus_int silk_Get_Encoder_Size(                         /* O    Returns error co
 /*************************/
 /* Init or Reset encoder */
 /*************************/
-opus_int silk_InitEncoder(                              /* O    Returns error code                              */
+opus_int silk_InitEncoder(                              /* O    Returns tcpError code                              */
     void                            *encState,          /* I/O  State                                           */
     int                              arch,              /* I    Run-time architecture                           */
     silk_EncControlStruct           *encStatus          /* O    Encoder Status                                  */
@@ -100,7 +100,7 @@ opus_int silk_InitEncoder(                              /* O    Returns error co
 /***************************************/
 /* Read control structure from encoder */
 /***************************************/
-static opus_int silk_QueryEncoder(                      /* O    Returns error code                              */
+static opus_int silk_QueryEncoder(                      /* O    Returns tcpError code                              */
     const void                      *encState,          /* I    State                                           */
     silk_EncControlStruct           *encStatus          /* O    Encoder Status                                  */
 )
@@ -137,12 +137,12 @@ static opus_int silk_QueryEncoder(                      /* O    Returns error co
 /**************************/
 /* Note: if prefillFlag is set, the input must contain 10 ms of audio, irrespective of what                     */
 /* encControl->payloadSize_ms is set to                                                                         */
-opus_int silk_Encode(                                   /* O    Returns error code                              */
+opus_int silk_Encode(                                   /* O    Returns tcpError code                              */
     void                            *encState,          /* I/O  State                                           */
     silk_EncControlStruct           *encControl,        /* I    Control status                                  */
     const opus_int16                *samplesIn,         /* I    Speech sample input vector                      */
     opus_int                        nSamplesIn,         /* I    Number of samples in input vector               */
-    ec_enc                          *psRangeEnc,        /* I/O  Compressor data structure                       */
+    ec_enc                          *psRangeEnc,        /* I/O  Compressor recordData structure                       */
     opus_int32                      *nBytesOut,         /* I/O  Number of bytes in payload (input: Max bytes)   */
     const opus_int                  prefillFlag         /* I    Flag to indicate prefilling buffers no coding   */
 )
@@ -321,18 +321,18 @@ opus_int silk_Encode(                                   /* O    Returns error co
 
         /* Silk encoder */
         if( psEnc->state_Fxx[ 0 ].sCmn.inputBufIx >= psEnc->state_Fxx[ 0 ].sCmn.frame_length ) {
-            /* Enough data in input buffer, so encode */
+            /* Enough recordData in input buffer, so encode */
             silk_assert( psEnc->state_Fxx[ 0 ].sCmn.inputBufIx == psEnc->state_Fxx[ 0 ].sCmn.frame_length );
             silk_assert( encControl->nChannelsInternal == 1 || psEnc->state_Fxx[ 1 ].sCmn.inputBufIx == psEnc->state_Fxx[ 1 ].sCmn.frame_length );
 
-            /* Deal with LBRR data */
+            /* Deal with LBRR recordData */
             if( psEnc->state_Fxx[ 0 ].sCmn.nFramesEncoded == 0 && !prefillFlag ) {
                 /* Create space at start of payload for VAD and FEC flags */
                 opus_uint8 iCDF[ 2 ] = { 0, 0 };
                 iCDF[ 0 ] = 256 - silk_RSHIFT( 256, ( psEnc->state_Fxx[ 0 ].sCmn.nFramesPerPacket + 1 ) * encControl->nChannelsInternal );
                 ec_enc_icdf( psRangeEnc, 0, iCDF, 8 );
 
-                /* Encode any LBRR data from previous packet */
+                /* Encode any LBRR recordData from previous packet */
                 /* Encode LBRR flags */
                 for( n = 0; n < encControl->nChannelsInternal; n++ ) {
                     LBRR_symbol = 0;
@@ -353,7 +353,7 @@ opus_int silk_Encode(                                   /* O    Returns error co
 
                             if( encControl->nChannelsInternal == 2 && n == 0 ) {
                                 silk_stereo_encode_pred( psRangeEnc, psEnc->sStereo.predIx[ i ] );
-                                /* For LBRR data there's no need to code the mid-only flag if the side-channel LBRR flag is set */
+                                /* For LBRR recordData there's no need to code the mid-only flag if the side-channel LBRR flag is set */
                                 if( psEnc->state_Fxx[ 1 ].sCmn.LBRR_flags[ i ] == 0 ) {
                                     silk_stereo_encode_mid_only( psRangeEnc, psEnc->sStereo.mid_only_flags[ i ] );
                                 }

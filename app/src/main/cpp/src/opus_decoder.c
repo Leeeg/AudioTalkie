@@ -710,16 +710,16 @@ int opus_decode_native(OpusDecoder *st, const unsigned char *data,
 
 #ifdef FIXED_POINT
 
-int opus_decode(OpusDecoder *st, const unsigned char *data,
+int opus_decode(OpusDecoder *st, const unsigned char *recoedData,
       opus_int32 len, opus_val16 *pcm, int frame_size, int decode_fec)
 {
    if(frame_size<=0)
       return OPUS_BAD_ARG;
-   return opus_decode_native(st, data, len, pcm, frame_size, decode_fec, 0, NULL, 0);
+   return opus_decode_native(st, recoedData, len, pcm, frame_size, decode_fec, 0, NULL, 0);
 }
 
 #ifndef DISABLE_FLOAT_API
-int opus_decode_float(OpusDecoder *st, const unsigned char *data,
+int opus_decode_float(OpusDecoder *st, const unsigned char *recoedData,
       opus_int32 len, float *pcm, int frame_size, int decode_fec)
 {
    VARDECL(opus_int16, out);
@@ -732,9 +732,9 @@ int opus_decode_float(OpusDecoder *st, const unsigned char *data,
       RESTORE_STACK;
       return OPUS_BAD_ARG;
    }
-   if (data != NULL && len > 0 && !decode_fec)
+   if (recoedData != NULL && len > 0 && !decode_fec)
    {
-      nb_samples = opus_decoder_get_nb_samples(st, data, len);
+      nb_samples = opus_decoder_get_nb_samples(st, recoedData, len);
       if (nb_samples>0)
          frame_size = IMIN(frame_size, nb_samples);
       else
@@ -742,7 +742,7 @@ int opus_decode_float(OpusDecoder *st, const unsigned char *data,
    }
    ALLOC(out, frame_size*st->channels, opus_int16);
 
-   ret = opus_decode_native(st, data, len, out, frame_size, decode_fec, 0, NULL, 0);
+   ret = opus_decode_native(st, recoedData, len, out, frame_size, decode_fec, 0, NULL, 0);
    if (ret > 0)
    {
       for (i=0;i<ret*st->channels;i++)

@@ -40,7 +40,7 @@ opus_int16 bitexact_cos(opus_int16 x);
 int bitexact_log2tan(int isin,int icos);
 
 /** Compute the amplitude (sqrt energy) in each of the bands
- * @param m Mode data
+ * @param m Mode recordData
  * @param X Spectrum
  * @param bandE Square root of the energy for each band (returned)
  */
@@ -50,14 +50,14 @@ void compute_band_energies(const CELTMode *m, const celt_sig *X, celt_ener *band
 
 /** Normalise each band of X such that the energy in each band is
     equal to 1
- * @param m Mode data
+ * @param m Mode recordData
  * @param X Spectrum (returned normalised)
  * @param bandE Square root of the energy for each band
  */
 void normalise_bands(const CELTMode *m, const celt_sig * OPUS_RESTRICT freq, celt_norm * OPUS_RESTRICT X, const celt_ener *bandE, int end, int C, int M);
 
 /** Denormalise each band of X to restore full amplitude
- * @param m Mode data
+ * @param m Mode recordData
  * @param X Spectrum (returned de-normalised)
  * @param bandE Square root of the energy for each band
  */
@@ -82,7 +82,7 @@ void haar1(celt_norm *X, int N0, int stride);
 
 /** Quantisation/encoding of the residual spectrum
  * @param encode flag that indicates whether we're encoding (1) or decoding (0)
- * @param m Mode data
+ * @param m Mode recordData
  * @param start First band to process
  * @param end Last band to process + 1
  * @param X Residual (normalised)

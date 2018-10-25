@@ -46,7 +46,7 @@ static OPUS_INLINE void combine_pulses(
 }
 
 static OPUS_INLINE void encode_split(
-    ec_enc                      *psRangeEnc,    /* I/O  compressor data structure                   */
+    ec_enc                      *psRangeEnc,    /* I/O  compressor recordData structure                   */
     const opus_int              p_child1,       /* I    pulse amplitude of first child subframe     */
     const opus_int              p,              /* I    pulse amplitude of current subframe         */
     const opus_uint8            *shell_table    /* I    table of shell cdfs                         */
@@ -60,7 +60,7 @@ static OPUS_INLINE void encode_split(
 static OPUS_INLINE void decode_split(
     opus_int16                  *p_child1,      /* O    pulse amplitude of first child subframe     */
     opus_int16                  *p_child2,      /* O    pulse amplitude of second child subframe    */
-    ec_dec                      *psRangeDec,    /* I/O  Compressor data structure                   */
+    ec_dec                      *psRangeDec,    /* I/O  Compressor recordData structure                   */
     const opus_int              p,              /* I    pulse amplitude of current subframe         */
     const opus_uint8            *shell_table    /* I    table of shell cdfs                         */
 )
@@ -76,8 +76,8 @@ static OPUS_INLINE void decode_split(
 
 /* Shell encoder, operates on one shell code frame of 16 pulses */
 void silk_shell_encoder(
-    ec_enc                      *psRangeEnc,                    /* I/O  compressor data structure                   */
-    const opus_int              *pulses0                        /* I    data: nonnegative pulse amplitudes          */
+    ec_enc                      *psRangeEnc,                    /* I/O  compressor recordData structure                   */
+    const opus_int              *pulses0                        /* I    recordData: nonnegative pulse amplitudes          */
 )
 {
     opus_int pulses1[ 8 ], pulses2[ 4 ], pulses3[ 2 ], pulses4[ 1 ];
@@ -117,8 +117,8 @@ void silk_shell_encoder(
 
 /* Shell decoder, operates on one shell code frame of 16 pulses */
 void silk_shell_decoder(
-    opus_int16                  *pulses0,                       /* O    data: nonnegative pulse amplitudes          */
-    ec_dec                      *psRangeDec,                    /* I/O  Compressor data structure                   */
+    opus_int16                  *pulses0,                       /* O    recordData: nonnegative pulse amplitudes          */
+    ec_dec                      *psRangeDec,                    /* I/O  Compressor recordData structure                   */
     const opus_int              pulses4                         /* I    number of pulses per pulse-subframe         */
 )
 {

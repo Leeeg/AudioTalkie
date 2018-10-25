@@ -38,7 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /****************/
 opus_int silk_decode_frame(
     silk_decoder_state          *psDec,                         /* I/O  Pointer to Silk decoder state               */
-    ec_dec                      *psRangeDec,                    /* I/O  Compressor data structure                   */
+    ec_dec                      *psRangeDec,                    /* I/O  Compressor recordData structure                   */
     opus_int16                  pOut[],                         /* O    Pointer to output speech frame              */
     opus_int32                  *pN,                            /* O    Pointer to size of output frame             */
     opus_int                    lostFlag,                       /* I    0: no loss, 1 loss, 2 decode fec            */

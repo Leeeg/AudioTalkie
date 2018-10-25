@@ -42,15 +42,15 @@ extern "C" {
 /** @defgroup opus_errorcodes Error codes
  * @{
  */
-/** No error @hideinitializer*/
+/** No tcpError @hideinitializer*/
 #define OPUS_OK                0
 /** One or more invalid/out of range arguments @hideinitializer*/
 #define OPUS_BAD_ARG          -1
 /** Not enough bytes allocated in the buffer @hideinitializer*/
 #define OPUS_BUFFER_TOO_SMALL -2
-/** An internal error was detected @hideinitializer*/
+/** An internal tcpError was detected @hideinitializer*/
 #define OPUS_INTERNAL_ERROR   -3
-/** The compressed data passed is corrupted @hideinitializer*/
+/** The compressed recordData passed is corrupted @hideinitializer*/
 #define OPUS_INVALID_PACKET   -4
 /** Invalid/unsupported request number @hideinitializer*/
 #define OPUS_UNIMPLEMENTED    -5
@@ -460,7 +460,7 @@ extern "C" {
 /** Gets the total samples of delay added by the entire codec.
   * This can be queried by the encoder and then the provided number of samples can be
   * skipped on from the start of the decoder's output to provide time aligned input
-  * and output. From the perspective of a decoding application the real data begins this many
+  * and output. From the perspective of a decoding application the real recordData begins this many
   * samples late.
   *
   * The decoder contribution to this delay is identical for all decoders, but the
@@ -472,7 +472,7 @@ extern "C" {
   * @hideinitializer */
 #define OPUS_GET_LOOKAHEAD(x) OPUS_GET_LOOKAHEAD_REQUEST, __opus_check_int_ptr(x)
 
-/** Configures the encoder's use of inband forward error correction (FEC).
+/** Configures the encoder's use of inband forward tcpError correction (FEC).
   * @note This is only applicable to the LPC layer
   * @see OPUS_GET_INBAND_FEC
   * @param[in] x <tt>opus_int32</tt>: Allowed values:
@@ -482,7 +482,7 @@ extern "C" {
   * </dl>
   * @hideinitializer */
 #define OPUS_SET_INBAND_FEC(x) OPUS_SET_INBAND_FEC_REQUEST, __opus_check_int(x)
-/** Gets encoder's configured use of inband forward error correction.
+/** Gets encoder's configured use of inband forward tcpError correction.
   * @see OPUS_SET_INBAND_FEC
   * @param[out] x <tt>opus_int32 *</tt>: Returns one of the following values:
   * <dl>
@@ -660,7 +660,7 @@ extern "C" {
 /** Gets the final state of the codec's entropy coder.
   * This is used for testing purposes,
   * The encoder and decoder state should be identical after coding a payload
-  * (assuming no data corruption or software bugs)
+  * (assuming no recordData corruption or software bugs)
   *
   * @param[out] x <tt>opus_uint32 *</tt>: Entropy coder state
   *
@@ -760,9 +760,9 @@ extern "C" {
   * @{
   */
 
-/** Converts an opus error code into a human readable string.
+/** Converts an opus tcpError code into a human readable string.
   *
-  * @param[in] error <tt>int</tt>: Error number
+  * @param[in] tcpError <tt>int</tt>: Error number
   * @returns Error string
   */
 OPUS_EXPORT const char *opus_strerror(int error);

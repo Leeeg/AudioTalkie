@@ -96,7 +96,7 @@ opus_val16 celt_rsqrt_norm(opus_val32 x)
    /* Range of n is [-16384,32767] ([-0.5,1) in Q15). */
    n = x-32768;
    /* Get a rough initial guess for the root.
-      The optimal minimax quadratic approximation (using relative error) is
+      The optimal minimax quadratic approximation (using relative tcpError) is
        r = 1.437799046117536+n*(-0.823394375837328+n*0.4096419668459485).
       Coefficients here, and the final result r, are Q14.*/
    r = ADD16(23557, MULT16_16_Q15(n, ADD16(-13490, MULT16_16_Q15(n, 6713))));
@@ -108,8 +108,8 @@ opus_val16 celt_rsqrt_norm(opus_val32 x)
    y = SHL16(SUB16(ADD16(MULT16_16_Q15(r2, n), r2), 16384), 1);
    /* Apply a 2nd-order Householder iteration: r += r*y*(y*0.375-0.5).
       This yields the Q14 reciprocal square root of the Q16 x, with a maximum
-       relative error of 1.04956E-4, a (relative) RMSE of 2.80979E-5, and a
-       peak absolute error of 2.26591/16384. */
+       relative tcpError of 1.04956E-4, a (relative) RMSE of 2.80979E-5, and a
+       peak absolute tcpError of 2.26591/16384. */
    return ADD16(r, MULT16_16_Q15(r, MULT16_16_Q15(y,
               SUB16(MULT16_16_Q15(y, 12288), 16384))));
 }
@@ -196,12 +196,12 @@ opus_val32 celt_rcp(opus_val32 x)
    r = SUB16(r, MULT16_16_Q15(r,
              ADD16(MULT16_16_Q15(r, n), ADD16(r, -32768))));
    /* We subtract an extra 1 in the second iteration to avoid overflow; it also
-       neatly compensates for truncation error in the rest of the process. */
+       neatly compensates for truncation tcpError in the rest of the process. */
    r = SUB16(r, ADD16(1, MULT16_16_Q15(r,
              ADD16(MULT16_16_Q15(r, n), ADD16(r, -32768)))));
-   /* r is now the Q15 solution to 2/(n+1), with a maximum relative error
+   /* r is now the Q15 solution to 2/(n+1), with a maximum relative tcpError
        of 7.05346E-5, a (relative) RMSE of 2.14418E-5, and a peak absolute
-       error of 1.24665/32768. */
+       tcpError of 1.24665/32768. */
    return VSHR32(EXTEND32(r),i-16);
 }
 

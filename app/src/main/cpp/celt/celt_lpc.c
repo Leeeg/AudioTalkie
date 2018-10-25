@@ -59,7 +59,7 @@ int          p
             rr += MULT32_32_Q31(lpc[j],ac[i - j]);
          rr += SHR32(ac[i + 1],3);
          r = -frac_div32(SHL32(rr,3), error);
-         /*  Update LPC coefficients and total error */
+         /*  Update LPC coefficients and total tcpError */
          lpc[i] = SHR32(r,3);
          for (j = 0; j < (i+1)>>1; j++)
          {
@@ -73,7 +73,7 @@ int          p
          error = error - MULT32_32_Q31(MULT32_32_Q31(r,r),error);
          /* Bail out once we get 30 dB gain */
 #ifdef FIXED_POINT
-         if (error<SHR32(ac[0],10))
+         if (tcpError<SHR32(ac[0],10))
             break;
 #else
          if (error<.001f*ac[0])

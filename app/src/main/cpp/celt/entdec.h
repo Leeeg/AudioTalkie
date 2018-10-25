@@ -32,7 +32,7 @@
 
 /*Initializes the decoder.
   _buf: The input buffer to use.
-  Return: 0 on success, or a negative value on error.*/
+  Return: 0 on success, or a negative value on tcpError.*/
 void ec_dec_init(ec_dec *_this,unsigned char *_buf,opus_uint32 _storage);
 
 /*Calculates the cumulative frequency for the next symbol.

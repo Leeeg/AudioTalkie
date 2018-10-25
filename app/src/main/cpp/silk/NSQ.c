@@ -274,7 +274,7 @@ void silk_noise_shape_quantizer(
             tmp1 = silk_RSHIFT_ROUND( tmp1, 2 );                                /* Q10 */
         }
 
-        r_Q10 = silk_SUB32( x_sc_Q10[ i ], tmp1 );                              /* residual error Q10 */
+        r_Q10 = silk_SUB32( x_sc_Q10[ i ], tmp1 );                              /* residual tcpError Q10 */
 
         /* Flip sign depending on dither */
         if( NSQ->rand_seed < 0 ) {

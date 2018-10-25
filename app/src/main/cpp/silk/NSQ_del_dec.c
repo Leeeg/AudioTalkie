@@ -456,7 +456,7 @@ static OPUS_INLINE void silk_noise_shape_quantizer_del_dec(
             tmp1 = silk_SUB32( tmp2, tmp1 );                                            /* Q13 */
             tmp1 = silk_RSHIFT_ROUND( tmp1, 4 );                                        /* Q10 */
 
-            r_Q10 = silk_SUB32( x_Q10[ i ], tmp1 );                                     /* residual error Q10 */
+            r_Q10 = silk_SUB32( x_Q10[ i ], tmp1 );                                     /* residual tcpError Q10 */
 
             /* Flip sign depending on dither */
             if ( psDD->Seed < 0 ) {

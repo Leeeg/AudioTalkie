@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "main.h"
 
-/* Entropy constrained matrix-weighted VQ, hard-coded to 5-element vectors, for a single input data vector */
+/* Entropy constrained matrix-weighted VQ, hard-coded to 5-element vectors, for a single input recordData vector */
 void silk_VQ_WMat_EC_c(
     opus_int8                   *ind,                           /* O    index of best codebook vector               */
     opus_int32                  *res_nrg_Q15,                   /* O    best residual energy                        */
@@ -70,7 +70,7 @@ void silk_VQ_WMat_EC_c(
         opus_int32 penalty;
         gain_tmp_Q7 = cb_gain_Q7[k];
         /* Weighted rate */
-        /* Quantization error: 1 - 2 * xX * cb + cb' * XX * cb */
+        /* Quantization tcpError: 1 - 2 * xX * cb + cb' * XX * cb */
         sum1_Q15 = SILK_FIX_CONST( 1.001, 15 );
 
         /* Penalty for too large gain */

@@ -92,10 +92,10 @@ void ec_enc_bits(ec_enc *_this,opus_uint32 _fl,unsigned _ftb);
           This must be no more than 8.*/
 void ec_enc_patch_initial_bits(ec_enc *_this,unsigned _val,unsigned _nbits);
 
-/*Compacts the data to fit in the target size.
+/*Compacts the recordData to fit in the target size.
   This moves up the raw bits at the end of the current buffer so they are at
    the end of the new buffer size.
-  The caller must ensure that the amount of data that's already been written
+  The caller must ensure that the amount of recordData that's already been written
    will fit in the new size.
   _size: The number of bytes in the new buffer.
          This must be large enough to contain the bits already written, and

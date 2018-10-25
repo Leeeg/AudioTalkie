@@ -100,7 +100,7 @@ void tonality_analysis_init(TonalityAnalysisState *analysis, opus_int32 Fs);
 
 /** Reset a TonalityAnalysisState stuct.
  *
- * Call this when there's a discontinuity in the data.
+ * Call this when there's a discontinuity in the recordData.
  */
 void tonality_analysis_reset(TonalityAnalysisState *analysis);
 

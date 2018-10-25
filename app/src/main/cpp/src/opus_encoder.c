@@ -1825,8 +1825,8 @@ opus_int32 opus_encode_native(OpusEncoder *st, const opus_val16 *pcm, int frame_
 #endif
         ret = silk_Encode( silk_enc, &st->silk_mode, pcm_silk, frame_size, &enc, &nBytes, 0 );
         if( ret ) {
-            /*fprintf (stderr, "SILK encode error: %d\n", ret);*/
-            /* Handle error */
+            /*fprintf (stderr, "SILK encode tcpError: %d\n", ret);*/
+            /* Handle tcpError */
            RESTORE_STACK;
            return OPUS_INTERNAL_ERROR;
         }
@@ -2057,7 +2057,7 @@ opus_int32 opus_encode_native(OpusEncoder *st, const opus_val16 *pcm, int frame_
               RESTORE_STACK;
               return OPUS_INTERNAL_ERROR;
            }
-           /* Put CELT->SILK redundancy data in the right place. */
+           /* Put CELT->SILK redundancy recordData in the right place. */
            if (redundancy && celt_to_silk && st->mode==MODE_HYBRID && st->use_vbr)
            {
               OPUS_MOVE(data+ret, data+nb_compr_bytes, redundancy_bytes);
@@ -2172,7 +2172,7 @@ opus_int32 opus_encode_native(OpusEncoder *st, const opus_val16 *pcm, int frame_
 
 #ifndef DISABLE_FLOAT_API
 opus_int32 opus_encode_float(OpusEncoder *st, const float *pcm, int analysis_frame_size,
-      unsigned char *data, opus_int32 max_data_bytes)
+      unsigned char *recordData, opus_int32 max_data_bytes)
 {
    int i, ret;
    int frame_size;
@@ -2189,7 +2189,7 @@ opus_int32 opus_encode_float(OpusEncoder *st, const float *pcm, int analysis_fra
 
    for (i=0;i<frame_size*st->channels;i++)
       in[i] = FLOAT2INT16(pcm[i]);
-   ret = opus_encode_native(st, in, frame_size, data, max_data_bytes, 16,
+   ret = opus_encode_native(st, in, frame_size, recordData, max_data_bytes, 16,
                             pcm, analysis_frame_size, 0, -2, st->channels, downmix_float, 1);
    RESTORE_STACK;
    return ret;
@@ -2197,11 +2197,11 @@ opus_int32 opus_encode_float(OpusEncoder *st, const float *pcm, int analysis_fra
 #endif
 
 opus_int32 opus_encode(OpusEncoder *st, const opus_int16 *pcm, int analysis_frame_size,
-                unsigned char *data, opus_int32 out_data_bytes)
+                unsigned char *recordData, opus_int32 out_data_bytes)
 {
    int frame_size;
    frame_size = frame_size_select(analysis_frame_size, st->variable_duration, st->Fs);
-   return opus_encode_native(st, pcm, frame_size, data, out_data_bytes, 16,
+   return opus_encode_native(st, pcm, frame_size, recordData, out_data_bytes, 16,
                              pcm, analysis_frame_size, 0, -2, st->channels, downmix_int, 0);
 }
 

@@ -27,8 +27,7 @@ Java_lee_com_audiotalkie_OpusJni_initOpus(JNIEnv *env, jobject instance) {
 
 extern "C"
 JNIEXPORT jshortArray JNICALL
-Java_lee_com_audiotalkie_OpusJni_opusEncoder(JNIEnv *env, jclass type, jshortArray buffer_,
-                                           jint length) {
+Java_lee_com_audiotalkie_OpusJni_opusEncoder(JNIEnv *env, jclass type, jshortArray buffer_, jint length) {
     jshort *buffer = env->GetShortArrayElements(buffer_, NULL);
     short outBuffer[length];
     int len = opus_encodes(opusEncoder, buffer, length, outBuffer);

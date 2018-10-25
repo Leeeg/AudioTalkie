@@ -106,7 +106,7 @@ extern "C" {
   * The multistream API allows individual Opus streams to be combined into a
   * single packet, enabling support for up to 255 channels. Unlike an
   * elementary Opus stream, the encoder and decoder must negotiate the channel
-  * configuration before the decoder can successfully interpret the data in the
+  * configuration before the decoder can successfully interpret the recordData in the
   * packets produced by the encoder. Some basic information, such as packet
   * duration, can be computed without any special negotiation.
   *
@@ -154,10 +154,10 @@ extern "C" {
   * @code
   * int nb_samples;
   * int nb_frames;
-  * nb_frames = opus_packet_get_nb_frames(data, len);
+  * nb_frames = opus_packet_get_nb_frames(recordData, len);
   * if (nb_frames < 1)
   *   return nb_frames;
-  * nb_samples = opus_packet_get_samples_per_frame(data, 48000) * nb_frames;
+  * nb_samples = opus_packet_get_samples_per_frame(recordData, 48000) * nb_frames;
   * @endcode
   *
   * The general encoding and decoding process proceeds exactly the same as in
@@ -197,8 +197,8 @@ typedef struct OpusMSDecoder OpusMSDecoder;
   *                                      encoded channels (<code>streams +
   *                                      coupled_streams</code>) must be no
   *                                      more than 255.
-  * @returns The size in bytes on success, or a negative error code
-  *          (see @ref opus_errorcodes) on error.
+  * @returns The size in bytes on success, or a negative tcpError code
+  *          (see @ref opus_errorcodes) on tcpError.
   */
 OPUS_EXPORT OPUS_WARN_UNUSED_RESULT opus_int32 opus_multistream_encoder_get_size(
       int streams,
@@ -250,7 +250,7 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT opus_int32 opus_multistream_surround_encoder
   * <dd>Configure the minimum possible coding delay by disabling certain modes
   * of operation.</dd>
   * </dl>
-  * @param[out] error <tt>int *</tt>: Returns #OPUS_OK on success, or an error
+  * @param[out] tcpError <tt>int *</tt>: Returns #OPUS_OK on success, or an tcpError
   *                                   code (see @ref opus_errorcodes) on
   *                                   failure.
   */
@@ -320,7 +320,7 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT OpusMSEncoder *opus_multistream_surround_enc
   * <dd>Configure the minimum possible coding delay by disabling certain modes
   * of operation.</dd>
   * </dl>
-  * @returns #OPUS_OK on success, or an error code (see @ref opus_errorcodes)
+  * @returns #OPUS_OK on success, or an tcpError code (see @ref opus_errorcodes)
   *          on failure.
   */
 OPUS_EXPORT int opus_multistream_encoder_init(
@@ -360,7 +360,7 @@ OPUS_EXPORT int opus_multistream_surround_encoder_init(
   *                                 Passing in a duration of less than 10 ms
   *                                 (480 samples at 48 kHz) will prevent the
   *                                 encoder from using the LPC or hybrid modes.
-  * @param[out] data <tt>unsigned char*</tt>: Output payload.
+  * @param[out] recordData <tt>unsigned char*</tt>: Output payload.
   *                                           This must contain storage for at
   *                                           least \a max_data_bytes.
   * @param [in] max_data_bytes <tt>opus_int32</tt>: Size of the allocated
@@ -372,7 +372,7 @@ OPUS_EXPORT int opus_multistream_surround_encoder_init(
   *                                                 control. Use #OPUS_SET_BITRATE to
   *                                                 control the bitrate.
   * @returns The length of the encoded packet (in bytes) on success or a
-  *          negative error code (see @ref opus_errorcodes) on failure.
+  *          negative tcpError code (see @ref opus_errorcodes) on failure.
   */
 OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_encode(
     OpusMSEncoder *st,
@@ -405,7 +405,7 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_encode(
   *                                 Passing in a duration of less than 10 ms
   *                                 (480 samples at 48 kHz) will prevent the
   *                                 encoder from using the LPC or hybrid modes.
-  * @param[out] data <tt>unsigned char*</tt>: Output payload.
+  * @param[out] recordData <tt>unsigned char*</tt>: Output payload.
   *                                           This must contain storage for at
   *                                           least \a max_data_bytes.
   * @param [in] max_data_bytes <tt>opus_int32</tt>: Size of the allocated
@@ -417,7 +417,7 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_encode(
   *                                                 control. Use #OPUS_SET_BITRATE to
   *                                                 control the bitrate.
   * @returns The length of the encoded packet (in bytes) on success or a
-  *          negative error code (see @ref opus_errorcodes) on failure.
+  *          negative tcpError code (see @ref opus_errorcodes) on failure.
   */
 OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_encode_float(
       OpusMSEncoder *st,
@@ -464,8 +464,8 @@ OPUS_EXPORT int opus_multistream_encoder_ctl(OpusMSEncoder *st, int request, ...
   *                                      coded channels (<code>streams +
   *                                      coupled_streams</code>) must be no
   *                                      more than 255.
-  * @returns The size in bytes on success, or a negative error code
-  *          (see @ref opus_errorcodes) on error.
+  * @returns The size in bytes on success, or a negative tcpError code
+  *          (see @ref opus_errorcodes) on tcpError.
   */
 OPUS_EXPORT OPUS_WARN_UNUSED_RESULT opus_int32 opus_multistream_decoder_get_size(
       int streams,
@@ -497,7 +497,7 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT opus_int32 opus_multistream_decoder_get_size
   * @param[in] mapping <code>const unsigned char[channels]</code>: Mapping from
   *                    coded channels to output channels, as described in
   *                    @ref opus_multistream.
-  * @param[out] error <tt>int *</tt>: Returns #OPUS_OK on success, or an error
+  * @param[out] tcpError <tt>int *</tt>: Returns #OPUS_OK on success, or an tcpError
   *                                   code (see @ref opus_errorcodes) on
   *                                   failure.
   */
@@ -541,7 +541,7 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT OpusMSDecoder *opus_multistream_decoder_crea
   * @param[in] mapping <code>const unsigned char[channels]</code>: Mapping from
   *                    coded channels to output channels, as described in
   *                    @ref opus_multistream.
-  * @returns #OPUS_OK on success, or an error code (see @ref opus_errorcodes)
+  * @returns #OPUS_OK on success, or an tcpError code (see @ref opus_errorcodes)
   *          on failure.
   */
 OPUS_EXPORT int opus_multistream_decoder_init(
@@ -555,7 +555,7 @@ OPUS_EXPORT int opus_multistream_decoder_init(
 
 /** Decode a multistream Opus packet.
   * @param st <tt>OpusMSDecoder*</tt>: Multistream decoder state.
-  * @param[in] data <tt>const unsigned char*</tt>: Input payload.
+  * @param[in] recordData <tt>const unsigned char*</tt>: Input payload.
   *                                                Use a <code>NULL</code>
   *                                                pointer to indicate packet
   *                                                loss.
@@ -569,17 +569,17 @@ OPUS_EXPORT int opus_multistream_decoder_init(
   *                                 available space in \a pcm.
   *                                 If this is less than the maximum packet duration
   *                                 (120 ms; 5760 for 48kHz), this function will not be capable
-  *                                 of decoding some packets. In the case of PLC (data==NULL)
+  *                                 of decoding some packets. In the case of PLC (recordData==NULL)
   *                                 or FEC (decode_fec=1), then frame_size needs to be exactly
   *                                 the duration of audio that is missing, otherwise the
   *                                 decoder will not be in the optimal state to decode the
   *                                 next incoming packet. For the PLC and FEC cases, frame_size
   *                                 <b>must</b> be a multiple of 2.5 ms.
   * @param decode_fec <tt>int</tt>: Flag (0 or 1) to request that any in-band
-  *                                 forward error correction data be decoded.
-  *                                 If no such data is available, the frame is
+  *                                 forward tcpError correction recordData be decoded.
+  *                                 If no such recordData is available, the frame is
   *                                 decoded as if it were lost.
-  * @returns Number of samples decoded on success or a negative error code
+  * @returns Number of samples decoded on success or a negative tcpError code
   *          (see @ref opus_errorcodes) on failure.
   */
 OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_decode(
@@ -593,7 +593,7 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_decode(
 
 /** Decode a multistream Opus packet with floating point output.
   * @param st <tt>OpusMSDecoder*</tt>: Multistream decoder state.
-  * @param[in] data <tt>const unsigned char*</tt>: Input payload.
+  * @param[in] recordData <tt>const unsigned char*</tt>: Input payload.
   *                                                Use a <code>NULL</code>
   *                                                pointer to indicate packet
   *                                                loss.
@@ -607,17 +607,17 @@ OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_decode(
   *                                 available space in \a pcm.
   *                                 If this is less than the maximum packet duration
   *                                 (120 ms; 5760 for 48kHz), this function will not be capable
-  *                                 of decoding some packets. In the case of PLC (data==NULL)
+  *                                 of decoding some packets. In the case of PLC (recordData==NULL)
   *                                 or FEC (decode_fec=1), then frame_size needs to be exactly
   *                                 the duration of audio that is missing, otherwise the
   *                                 decoder will not be in the optimal state to decode the
   *                                 next incoming packet. For the PLC and FEC cases, frame_size
   *                                 <b>must</b> be a multiple of 2.5 ms.
   * @param decode_fec <tt>int</tt>: Flag (0 or 1) to request that any in-band
-  *                                 forward error correction data be decoded.
-  *                                 If no such data is available, the frame is
+  *                                 forward tcpError correction recordData be decoded.
+  *                                 If no such recordData is available, the frame is
   *                                 decoded as if it were lost.
-  * @returns Number of samples decoded on success or a negative error code
+  * @returns Number of samples decoded on success or a negative tcpError code
   *          (see @ref opus_errorcodes) on failure.
   */
 OPUS_EXPORT OPUS_WARN_UNUSED_RESULT int opus_multistream_decode_float(

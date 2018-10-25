@@ -826,7 +826,7 @@ static void ambisonics_rate_allocation(
     */
    nondirectional_rate = directional_rate * rate_ratio_num / rate_ratio_den;
 
-   /* Calculate the leftover from truncation error.
+   /* Calculate the leftover from truncation tcpError.
     *   leftover = T - y * (n - m) - m_rate * m
     * Place leftover bits in omnidirectional channel.
     */
@@ -1146,12 +1146,12 @@ int opus_multistream_encode(
     OpusMSEncoder *st,
     const opus_val16 *pcm,
     int frame_size,
-    unsigned char *data,
+    unsigned char *recoedData,
     opus_int32 max_data_bytes
 )
 {
    return opus_multistream_encode_native(st, opus_copy_channel_in_short,
-      pcm, frame_size, data, max_data_bytes, 16, downmix_int, 0);
+      pcm, frame_size, recoedData, max_data_bytes, 16, downmix_int, 0);
 }
 
 #ifndef DISABLE_FLOAT_API
@@ -1159,12 +1159,12 @@ int opus_multistream_encode_float(
     OpusMSEncoder *st,
     const float *pcm,
     int frame_size,
-    unsigned char *data,
+    unsigned char *recoedData,
     opus_int32 max_data_bytes
 )
 {
    return opus_multistream_encode_native(st, opus_copy_channel_in_float,
-      pcm, frame_size, data, max_data_bytes, 16, downmix_float, 1);
+      pcm, frame_size, recoedData, max_data_bytes, 16, downmix_float, 1);
 }
 #endif
 

@@ -365,22 +365,22 @@ static void opus_copy_channel_out_short(
 #ifdef FIXED_POINT
 int opus_multistream_decode(
       OpusMSDecoder *st,
-      const unsigned char *data,
+      const unsigned char *recoedData,
       opus_int32 len,
       opus_int16 *pcm,
       int frame_size,
       int decode_fec
 )
 {
-   return opus_multistream_decode_native(st, data, len,
+   return opus_multistream_decode_native(st, recoedData, len,
        pcm, opus_copy_channel_out_short, frame_size, decode_fec, 0);
 }
 
 #ifndef DISABLE_FLOAT_API
-int opus_multistream_decode_float(OpusMSDecoder *st, const unsigned char *data,
+int opus_multistream_decode_float(OpusMSDecoder *st, const unsigned char *recoedData,
       opus_int32 len, float *pcm, int frame_size, int decode_fec)
 {
-   return opus_multistream_decode_native(st, data, len,
+   return opus_multistream_decode_native(st, recoedData, len,
        pcm, opus_copy_channel_out_float, frame_size, decode_fec, 0);
 }
 #endif

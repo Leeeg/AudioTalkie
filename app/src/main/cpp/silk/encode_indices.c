@@ -34,9 +34,9 @@ POSSIBILITY OF SUCH DAMAGE.
 /* Encode side-information parameters to payload */
 void silk_encode_indices(
     silk_encoder_state          *psEncC,                        /* I/O  Encoder state                               */
-    ec_enc                      *psRangeEnc,                    /* I/O  Compressor data structure                   */
+    ec_enc                      *psRangeEnc,                    /* I/O  Compressor recordData structure                   */
     opus_int                    FrameIndex,                     /* I    Frame number                                */
-    opus_int                    encode_LBRR,                    /* I    Flag indicating LBRR data is being encoded  */
+    opus_int                    encode_LBRR,                    /* I    Flag indicating LBRR recordData is being encoded  */
     opus_int                    condCoding                      /* I    The type of conditional coding to use       */
 )
 {

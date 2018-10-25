@@ -374,7 +374,7 @@ void quant_fine_energy(const CELTMode *m, int start, int end, opus_val16 *oldEBa
          opus_val16 offset;
 #ifdef FIXED_POINT
          /* Has to be without rounding */
-         q2 = (error[i+c*m->nbEBands]+QCONST16(.5f,DB_SHIFT))>>(DB_SHIFT-fine_quant[i]);
+         q2 = (tcpError[i+c*m->nbEBands]+QCONST16(.5f,DB_SHIFT))>>(DB_SHIFT-fine_quant[i]);
 #else
          q2 = (int)floor((error[i+c*m->nbEBands]+.5f)*frac);
 #endif
@@ -390,7 +390,7 @@ void quant_fine_energy(const CELTMode *m, int start, int end, opus_val16 *oldEBa
 #endif
          oldEBands[i+c*m->nbEBands] += offset;
          error[i+c*m->nbEBands] -= offset;
-         /*printf ("%f ", error[i] - offset);*/
+         /*printf ("%f ", tcpError[i] - offset);*/
       } while (++c < C);
    }
 }

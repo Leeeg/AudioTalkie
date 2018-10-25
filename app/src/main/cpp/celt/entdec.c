@@ -57,11 +57,11 @@
    ensures that the stream will be correctly decoded regardless of the value of
    any subsequent bits.
   ec_tell() can be used to determine how many bits were needed to decode
-   all the symbols thus far; other data can be packed in the remaining bits of
+   all the symbols thus far; other recordData can be packed in the remaining bits of
    the input buffer.
   @PHDTHESIS{Pas76,
     author="Richard Clark Pasco",
-    title="Source coding algorithms for fast data compression",
+    title="Source coding algorithms for fast recordData compression",
     school="Dept. of Electrical Engineering, Stanford University",
     address="Stanford, CA",
     month=May,

@@ -39,7 +39,7 @@ extern "C"
 #define SILK_NO_ERROR                               0
 
 /**************************/
-/* Encoder error messages */
+/* Encoder tcpError messages */
 /**************************/
 
 /* Input length is not a multiple of 10 ms, or length is longer than the packet length */
@@ -69,14 +69,14 @@ extern "C"
 /* CBR setting not valid, use 0 or 1 */
 #define SILK_ENC_INVALID_CBR_SETTING                -109
 
-/* Internal encoder error */
+/* Internal encoder tcpError */
 #define SILK_ENC_INTERNAL_ERROR                     -110
 
-/* Internal encoder error */
+/* Internal encoder tcpError */
 #define SILK_ENC_INVALID_NUMBER_OF_CHANNELS_ERROR   -111
 
 /**************************/
-/* Decoder error messages */
+/* Decoder tcpError messages */
 /**************************/
 
 /* Output sampling frequency lower than internal decoded sampling frequency */

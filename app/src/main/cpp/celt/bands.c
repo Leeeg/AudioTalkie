@@ -366,7 +366,7 @@ void anti_collapse(const CELTMode *m, celt_norm *X_, unsigned char *collapse_mas
    that we use the square root of the value we would have been using if we
    wanted to minimize the MSE in the non-normalized domain. This roughly
    corresponds to some quick-and-dirty perceptual experiments I ran to
-   measure inter-aural masking (there doesn't seem to be any published data
+   measure inter-aural masking (there doesn't seem to be any published recordData
    on the topic). */
 static void compute_channel_weights(celt_ener Ex, celt_ener Ey, opus_val16 w[2])
 {
@@ -889,7 +889,7 @@ static void compute_theta(struct band_ctx *ctx, struct split_ctx *sctx,
    } else {
       imid = bitexact_cos((opus_int16)itheta);
       iside = bitexact_cos((opus_int16)(16384-itheta));
-      /* This is the mid vs side allocation that minimizes squared error
+      /* This is the mid vs side allocation that minimizes squared tcpError
          in that band. */
       delta = FRAC_MUL16((N-1)<<7,bitexact_log2tan(iside,imid));
    }
@@ -1387,8 +1387,8 @@ static void special_hybrid_folding(const CELTMode *m, celt_norm *norm, celt_norm
    const opus_int16 * OPUS_RESTRICT eBands = m->eBands;
    n1 = M*(eBands[start+1]-eBands[start]);
    n2 = M*(eBands[start+2]-eBands[start+1]);
-   /* Duplicate enough of the first band folding data to be able to fold the second band.
-      Copies no data for CELT-only mode. */
+   /* Duplicate enough of the first band folding recordData to be able to fold the second band.
+      Copies no recordData for CELT-only mode. */
    OPUS_COPY(&norm[n1], &norm[2*n1 - n2], n2-n1);
    if (dual_stereo)
       OPUS_COPY(&norm2[n1], &norm2[2*n1 - n2], n2-n1);
@@ -1439,7 +1439,7 @@ void quant_all_bands(int encode, const CELTMode *m, int start, int end,
    norm2 = norm + M*eBands[m->nbEBands-1]-norm_offset;
 
    /* For decoding, we can use the last band as scratch space because we don't need that
-      scratch space for the last band and we don't care about the data there until we're
+      scratch space for the last band and we don't care about the recordData there until we're
       decoding the last band. */
    if (encode && resynth)
       resynth_alloc = M*(eBands[m->nbEBands]-eBands[m->nbEBands-1]);

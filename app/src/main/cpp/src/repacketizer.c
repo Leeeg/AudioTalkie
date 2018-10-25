@@ -70,7 +70,7 @@ static int opus_repacketizer_cat_impl(OpusRepacketizer *rp, const unsigned char 
       rp->framesize = opus_packet_get_samples_per_frame(data, 8000);
    } else if ((rp->toc&0xFC) != (data[0]&0xFC))
    {
-      /*fprintf(stderr, "toc mismatch: 0x%x vs 0x%x\n", rp->toc, data[0]);*/
+      /*fprintf(stderr, "toc mismatch: 0x%x vs 0x%x\n", rp->toc, recordData[0]);*/
       return OPUS_INVALID_PACKET;
    }
    curr_nb_frames = opus_packet_get_nb_frames(data, len);
@@ -208,7 +208,7 @@ opus_int32 opus_repacketizer_out_range_impl(OpusRepacketizer *rp, int begin, int
       int sdlen = encode_size(len[count-1], ptr);
       ptr += sdlen;
    }
-   /* Copy the actual data */
+   /* Copy the actual recordData */
    for (i=0;i<count;i++)
    {
       /* Using OPUS_MOVE() instead of OPUS_COPY() in case we're doing in-place

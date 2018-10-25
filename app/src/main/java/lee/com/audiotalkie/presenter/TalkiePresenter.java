@@ -19,5 +19,12 @@ public interface TalkiePresenter extends BasePresenter {
 
     void opusDecode();
 
+    void socketInit();
+
+    void TcpClose();
+
+    void TcpTest();
+
+    void UdpTest();
 
 }

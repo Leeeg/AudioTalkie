@@ -230,7 +230,7 @@ void ec_enc_patch_initial_bits(ec_enc *_this,unsigned _val,unsigned _nbits){
     _this->val=(_this->val&~((opus_uint32)mask<<EC_CODE_SHIFT))|
      (opus_uint32)_val<<(EC_CODE_SHIFT+shift);
   }
-  /*The encoder hasn't even encoded _nbits of data yet.*/
+  /*The encoder hasn't even encoded _nbits of recordData yet.*/
   else _this->error=-1;
 }
 
@@ -277,12 +277,12 @@ void ec_enc_done(ec_enc *_this){
     OPUS_CLEAR(_this->buf+_this->offs,
      _this->storage-_this->offs-_this->end_offs);
     if(used>0){
-      /*If there's no range coder data at all, give up.*/
+      /*If there's no range coder recordData at all, give up.*/
       if(_this->end_offs>=_this->storage)_this->error=-1;
       else{
         l=-l;
         /*If we've busted, don't add too many extra bits to the last byte; it
-           would corrupt the range coder data, and that's more important.*/
+           would corrupt the range coder recordData, and that's more important.*/
         if(_this->offs+_this->end_offs>=_this->storage&&l<used){
           window&=(1<<l)-1;
           _this->error=-1;

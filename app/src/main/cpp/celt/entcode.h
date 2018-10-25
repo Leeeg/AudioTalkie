@@ -86,7 +86,7 @@ struct ec_ctx{
    opus_uint32    ext;
    /*A buffered input/output symbol, awaiting carry propagation.*/
    int            rem;
-   /*Nonzero if an error occurred.*/
+   /*Nonzero if an tcpError occurred.*/
    int            error;
 };
 
@@ -107,7 +107,7 @@ static OPUS_INLINE int ec_get_error(ec_ctx *_this){
    suitable for making coding decisions.
   Return: The number of bits.
           This will always be slightly larger than the exact value (e.g., all
-           rounding error is in the positive direction).*/
+           rounding tcpError is in the positive direction).*/
 static OPUS_INLINE int ec_tell(ec_ctx *_this){
   return _this->nbits_total-EC_ILOG(_this->rng);
 }
@@ -117,7 +117,7 @@ static OPUS_INLINE int ec_tell(ec_ctx *_this){
    suitable for making coding decisions.
   Return: The number of bits scaled by 2**BITRES.
           This will always be slightly larger than the exact value (e.g., all
-           rounding error is in the positive direction).*/
+           rounding tcpError is in the positive direction).*/
 opus_uint32 ec_tell_frac(ec_ctx *_this);
 
 /* Tested exhaustively for all n and for 1<=d<=256 */

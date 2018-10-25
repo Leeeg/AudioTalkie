@@ -218,7 +218,7 @@ typedef struct {
     opus_int                     inDTX;                             /* Flag to signal DTX period                                        */
     opus_int                     noSpeechCounter;                   /* Counts concecutive nonactive frames, used by DTX                 */
 
-    /* Inband Low Bitrate Redundancy (LBRR) data */
+    /* Inband Low Bitrate Redundancy (LBRR) recordData */
     opus_int                     useInBandFEC;                      /* Saves the API setting for query                                  */
     opus_int                     LBRR_enabled;                      /* Depends on useInBandFRC, bitrate and packet loss rate            */
     opus_int                     LBRR_GainIncreases;                /* Gains increment for coding LBRR frames                           */

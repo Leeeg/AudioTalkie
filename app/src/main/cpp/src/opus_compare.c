@@ -227,7 +227,7 @@ int main(int _argc,const char **_argv){
     fclose(fin1);
     return EXIT_FAILURE;
   }
-  /*Read in the data and allocate scratch space.*/
+  /*Read in the recordData and allocate scratch space.*/
   xlength=read_pcm16(&x,fin1,2);
   if(nchannels==1){
     for(xi=0;xi<xlength;xi++)x[xi]=.5*(x[2*xi]+x[2*xi+1]);
@@ -241,7 +241,7 @@ int main(int _argc,const char **_argv){
     return EXIT_FAILURE;
   }
   if(xlength<TEST_WIN_SIZE){
-    fprintf(stderr,"Insufficient sample data (%lu<%i).\n",
+    fprintf(stderr,"Insufficient sample recordData (%lu<%i).\n",
      (unsigned long)xlength,TEST_WIN_SIZE);
     return EXIT_FAILURE;
   }
@@ -250,7 +250,7 @@ int main(int _argc,const char **_argv){
   X=(float *)opus_malloc(nframes*NFREQS*nchannels*sizeof(*X));
   Y=(float *)opus_malloc(nframes*yfreqs*nchannels*sizeof(*Y));
   /*Compute the per-band spectral energy of the original signal
-     and the error.*/
+     and the tcpError.*/
   band_energy(xb,X,BANDS,NBANDS,x,nchannels,nframes,
    TEST_WIN_SIZE,TEST_WIN_STEP,1);
   free(x);
@@ -370,13 +370,13 @@ int main(int _argc,const char **_argv){
   Q=100*(1-0.5*log(1+err)/log(1.13));
   if(Q<0){
     fprintf(stderr,"Test vector FAILS\n");
-    fprintf(stderr,"Internal weighted error is %f\n",err);
+    fprintf(stderr,"Internal weighted tcpError is %f\n",err);
     return EXIT_FAILURE;
   }
   else{
     fprintf(stderr,"Test vector PASSES\n");
     fprintf(stderr,
-     "Opus quality metric: %.1f %% (internal weighted error is %f)\n",Q,err);
+     "Opus quality metric: %.1f %% (internal weighted tcpError is %f)\n",Q,err);
     return EXIT_SUCCESS;
   }
 }

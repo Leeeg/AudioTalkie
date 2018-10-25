@@ -13,4 +13,6 @@ public interface TalkieView extends BaseView<TalkiePresenter>{
 
     void logClean();
 
+    void socketReset();
+
 }

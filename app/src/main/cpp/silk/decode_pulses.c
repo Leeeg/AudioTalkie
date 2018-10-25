@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* Decode quantization indices of excitation */
 /*********************************************/
 void silk_decode_pulses(
-    ec_dec                      *psRangeDec,                    /* I/O  Compressor data structure                   */
+    ec_dec                      *psRangeDec,                    /* I/O  Compressor recordData structure                   */
     opus_int16                  pulses[],                       /* O    Excitation signal                           */
     const opus_int              signalType,                     /* I    Sigtype                                     */
     const opus_int              quantOffsetType,                /* I    quantOffsetType                             */

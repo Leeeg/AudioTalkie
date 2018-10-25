@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import lee.com.audiotalkie.OpusJni;
@@ -77,7 +76,8 @@ public class MediaManager {
          * AUDIO_FORMAT 对应pcm音频的格式
          * */
         int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
-        final int minBufferSize = AudioTrack.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, channelConfig, RecordConfig.AUDIO_FORMAT);
+//        final int minBufferSize = AudioTrack.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, channelConfig, RecordConfig.AUDIO_FORMAT);
+        final int minBufferSize = 480;
         audioTrack = new AudioTrack(
                 new AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_MEDIA)
@@ -184,6 +184,10 @@ public class MediaManager {
 //            file.delete();
 //        }
 
+        if (1 != audioRecord.getState()) {
+            Log.e(TAG, "the audioRecord is uninitialized !  state = " + audioRecord.getState());
+            return;
+        }
         audioRecord.startRecording();
         isRecording = true;
 
@@ -207,22 +211,20 @@ public class MediaManager {
                         Log.i(TAG, "recording ---- bufferReadResult = " + bufferReadResult);
                         Log.i(TAG, "recording ---- length = " + data.length);
 
-                        if (bufferReadResult == minBufferSize){
+                        if (bufferReadResult == minBufferSize) {
                             Log.i(TAG, "recording ---- encode  >>");
                             short[] encoderShort = OpusJni.opusEncoder(data, bufferReadResult);
                             Log.i(TAG, "recording ---- encode  << \n");
-                            recordDataCallback.data(encoderShort);
+                            recordDataCallback.recordData(encoderShort);
 
-                            Log.i(TAG, "recording ---- decode  >>");
-                            short[] decodeShort = OpusJni.opusDecode(encoderShort, encoderShort.length, bufferReadResult);
-                            Log.i(TAG, "recording ---- decode  << \n");
+//                            Log.i(TAG, "recording ---- decode  >>");
+//                            short[] decodeShort = OpusJni.opusDecode(encoderShort, encoderShort.length, bufferReadResult);
+//                            Log.i(TAG, "recording ---- decode  << \n");
                         }
 
 
-
-
 //                            try {
-//                                os.write(data);
+//                                os.write(recordData);
 //                            } catch (IOException e) {
 //                                e.printStackTrace();
 //                            }
@@ -238,6 +240,7 @@ public class MediaManager {
             }
         }).start();
     }
+
 
     /**
      * 停止录制
