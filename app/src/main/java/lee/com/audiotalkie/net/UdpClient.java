@@ -1,5 +1,7 @@
 package lee.com.audiotalkie.net;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import lee.com.audiotalkie.TalkieApplication;
 import lee.com.audiotalkie.callBack.SocketCallback;
 
 /**
@@ -30,13 +33,14 @@ public class UdpClient {
     private InetAddress local = null;
     private DatagramPacket outPacket, inPacket;
     private SocketCallback socketCallback;
-    private BlockingDeque<byte[]> blockingDeque = new LinkedBlockingDeque<>(100);
+    private BlockingDeque<byte[]> blockingDeque = new LinkedBlockingDeque<>(1000);
     private int count;
 
     public UdpClient(String host, int port, SocketCallback socketCallback) {
         this.host = host;
         this.port = port;
         this.socketCallback = socketCallback;
+        Log.e("UdpClient : ", "host = " + host + "    port = " + port);
     }
 
     public BlockingDeque<byte[]> getBlockingDeque() {
@@ -63,7 +67,7 @@ public class UdpClient {
     class UdpSendThread extends Thread {
         @Override
         public void run() {
-            Log.d("UdpClient : ", "UdpSendThread running ");
+            Log.d("UdpClient : ", "UdpSendThread running ------------------ ");
             try {
                 outDatagramSocket = new DatagramSocket();
                 local = InetAddress.getByName(host);
@@ -93,10 +97,13 @@ public class UdpClient {
     class UdpReceiveThread extends Thread {
         @Override
         public void run() {
-            Log.d("UdpClient : ", "UdpReceiveThread running ");
+            Log.d("UdpClient : ", "UdpReceiveThread running ----------------- ");
             try {
-                inetSocketAddress = new InetSocketAddress(port);
-                inDatagramSocket = new DatagramSocket(inetSocketAddress);
+                WifiManager manager = (WifiManager) TalkieApplication.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                manager.createMulticastLock("UDPWifi");
+//                inetSocketAddress = new InetSocketAddress(port);
+                inDatagramSocket = new DatagramSocket(port);
+                inDatagramSocket.setBroadcast(true);
                 inPacket = new DatagramPacket(buffer, buffer.length);
             } catch (SocketException e) {
                 Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);

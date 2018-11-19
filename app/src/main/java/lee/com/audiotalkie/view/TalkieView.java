@@ -15,4 +15,8 @@ public interface TalkieView extends BaseView<TalkiePresenter>{
 
     void socketReset();
 
+    void setSpeak(boolean isSpeaking);
+
+    void setCatchCount(long count);
+
 }

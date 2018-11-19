@@ -15,6 +15,7 @@ public class VoiceManager {
     private static VoiceManager voiceManager;
     private RecordThread recordThread;
     private TrackThread trackThread;
+    private boolean isSpeaking, isListening;
 
     public VoiceManager() {
 
@@ -34,7 +35,6 @@ public class VoiceManager {
         return voiceManager;
     }
 
-
     /**
      * 初始化AudioRecord & AudioTrack
      */
@@ -52,18 +52,26 @@ public class VoiceManager {
     }
 
     public void startRecord() {
-        recordThread.begin();
+        if (!isListening){
+            isSpeaking = true;
+            recordThread.begin();
+        }
     }
 
     public void startTrack() {
-        trackThread.begin();
+        if (!isSpeaking){
+            isListening = true;
+            trackThread.begin();
+        }
     }
 
     public void stopRecord() {
+        isSpeaking = false;
         recordThread.over();
     }
 
     public void stopTrack() {
+        isListening = true;
         trackThread.over();
     }
 

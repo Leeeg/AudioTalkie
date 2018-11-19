@@ -7,15 +7,20 @@ import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
-import lee.com.audiotalkie.callBack.MediaPlayCallback;
+import lee.com.audiotalkie.callBack.MyTrackCallback;
 import lee.com.audiotalkie.callBack.RecordDataCallback;
 import lee.com.audiotalkie.callBack.SocketCallback;
+import lee.com.audiotalkie.model.NetConfig;
 import lee.com.audiotalkie.net.TcpClient;
 import lee.com.audiotalkie.net.UdpClient;
 import lee.com.audiotalkie.utils.DataUtil;
 import lee.com.audiotalkie.audio.VoiceManager;
+import lee.com.audiotalkie.utils.HttpUtil;
+import lee.com.audiotalkie.utils.LogUtil;
 import lee.com.audiotalkie.view.TalkieView;
 
 /**
@@ -24,7 +29,7 @@ import lee.com.audiotalkie.view.TalkieView;
  * Coder: lee
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, RecordDataCallback, SocketCallback {
+public class TalkiePresenterImpl implements TalkiePresenter, RecordDataCallback, SocketCallback, MyTrackCallback {
 
     private final String TAG = "Lee_log_TalkiePresenterImpl";
     private TalkieView mView;
@@ -33,6 +38,7 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
 
     private TcpClient tcpClient = null;
     private UdpClient udpClient = null;
+    private boolean isSpeaking, isListening;
 
     Handler handler = new Handler() {
         @Override
@@ -69,16 +75,12 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
     }
 
     @Override
-    public void onPlayOver() {
-
-    }
-
-    @Override
     public void recordStart() {
         Message message = handler.obtainMessage();
         message.what = 0;
         message.obj = "start record";
         handler.sendMessage(message);
+        isSpeaking = true;
         voiceManager.startRecord();
     }
 
@@ -88,16 +90,34 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         message.what = 0;
         message.obj = "stop record";
         handler.sendMessage(message);
+        isSpeaking = false;
         voiceManager.stopRecord();
+
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                super.run();
+//                try {
+//                    String url = "http://47.106.108.175:8089/cpsFirmware/uploadLogFile";
+//                    File file = new File(LogUtil.getFileName());
+//                    HttpUtil.uploadForm(null, "file", file, "upload.log", url);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }.start();
+
     }
 
     @Override
     public void trackStart() {
+        mView.setSpeak(true);
         voiceManager.startTrack();
     }
 
     @Override
     public void trackStop() {
+        mView.setSpeak(false);
         voiceManager.stopTrack();
     }
 
@@ -113,13 +133,13 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
 
     @SuppressLint("LongLogTag")
     @Override
-    public void socketInit(String ip) {
+    public void socketInit(String ip, int port) {
 //        if (null == tcpClient)
 //            tcpClient = new TcpClient(ip, 8888, this);
 //        tcpClient.initSocket();
 
         if (null == udpClient)
-            udpClient = new UdpClient(ip, 8889, this);
+            udpClient = new UdpClient(ip, port, this);
         udpClient.initSocket();
     }
 
@@ -161,8 +181,10 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         handler.sendMessage(message);
 
         Log.e(TAG, "recordData data : " + data.length);
+        LogUtil.i("recordData : ", "" + data.length);
         byte[] b = DataUtil.toByteArray(data);
         Log.e(TAG, "recordData byte : " + b.length);
+
 //        short[] s = DataUtil.toShortArray(b);
 //        Log.e(TAG, "recordData short : " + s.length);
 
@@ -200,7 +222,10 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         Log.i(TAG, "socketReceive !   bytes.length = " + bytes.length);
         short[] s = DataUtil.toShortArray(bytes);
         Log.e(TAG, "recordData short : " + s.length);
-        voiceManager.addShorts(s);
+
+        if (!isSpeaking) {
+            voiceManager.addShorts(s);
+        }
     }
 
     @Override
@@ -218,4 +243,10 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         message.obj = "ERROR : " + msg + "  ..............  ";
         handler.sendMessage(message);
     }
+
+    @Override
+    public void catchCount(long count) {
+        mView.setCatchCount(count);
+    }
+
 }

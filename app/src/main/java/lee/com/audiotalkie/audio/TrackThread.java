@@ -14,7 +14,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.locks.LockSupport;
 
 import lee.com.audiotalkie.OpusJni;
-import lee.com.audiotalkie.model.AudioThread;
+import lee.com.audiotalkie.audio.AudioThread;
+import lee.com.audiotalkie.callBack.MyTrackCallback;
 import lee.com.audiotalkie.model.RecordConfig;
 
 /**
@@ -33,6 +34,15 @@ public class TrackThread extends Thread implements AudioThread {
     private boolean isPlaying = true;
     private BlockingDeque<short[]> blockingDeque;
     private boolean isPark = true;
+    private MyTrackCallback myTrackCallback;
+
+    public void removeMyTrackCallback() {
+        myTrackCallback = null;
+    }
+
+    public void addMyTrackCallback(MyTrackCallback myTrackCallback) {
+        this.myTrackCallback = myTrackCallback;
+    }
 
     public boolean addShorts(short[] shorts) {
         return blockingDeque.offer(shorts);
@@ -48,9 +58,8 @@ public class TrackThread extends Thread implements AudioThread {
 
         minTrackBufferSize = 480;
 
-        final int trackBufferSize = AudioTrack.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_OUT_CONFIG,
-                RecordConfig
-                        .AUDIO_FORMAT);
+        final int trackBufferSize = AudioTrack.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ.getValue(), RecordConfig.CHANNEL_OUT_CONFIG.getValue(),
+                RecordConfig.AUDIO_FORMAT.getValue());
         Log.e(TAG, "AudioTrack minTrackBufferSize = " + minTrackBufferSize);
 
         audioTrack = new AudioTrack(
@@ -59,9 +68,9 @@ public class TrackThread extends Thread implements AudioThread {
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build(),
                 new AudioFormat.Builder()
-                        .setSampleRate(RecordConfig.SAMPLE_RATE_INHZ)
-                        .setChannelMask(RecordConfig.CHANNEL_OUT_CONFIG)
-                        .setEncoding(RecordConfig.AUDIO_FORMAT)
+                        .setSampleRate(RecordConfig.SAMPLE_RATE_INHZ.getValue())
+                        .setChannelMask(RecordConfig.CHANNEL_OUT_CONFIG.getValue())
+                        .setEncoding(RecordConfig.AUDIO_FORMAT.getValue())
                         .build(),
                 trackBufferSize,
                 AudioTrack.MODE_STREAM,
@@ -124,7 +133,13 @@ public class TrackThread extends Thread implements AudioThread {
             try {
                 Log.d(TAG, "Playing -------------- ");
                 short[] shortBuffer = blockingDeque.takeFirst();
+                Log.i(TAG, "blockingDeque.size() = " + blockingDeque.size());
+                myTrackCallback.catchCount(blockingDeque.size());
                 if (isPark) {
+                    if (0 < blockingDeque.size()) {
+                        blockingDeque.clear();
+                        Log.i(TAG, "blockingDeque.size() = " + blockingDeque.size());
+                    }
                     LockSupport.park();
                 }
                 if (null != shortBuffer) {

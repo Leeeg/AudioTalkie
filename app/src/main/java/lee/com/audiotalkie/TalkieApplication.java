@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 
 import lee.com.audiotalkie.audio.VoiceManager;
+import lee.com.audiotalkie.utils.LogUtil;
 
 
 public class TalkieApplication extends Application {
@@ -20,6 +21,9 @@ public class TalkieApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
+
+        LogUtil.init(application.getApplicationContext());
+
     }
 
 }

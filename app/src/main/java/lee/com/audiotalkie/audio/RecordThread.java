@@ -11,7 +11,7 @@ import java.util.concurrent.locks.LockSupport;
 
 import lee.com.audiotalkie.OpusJni;
 import lee.com.audiotalkie.callBack.RecordDataCallback;
-import lee.com.audiotalkie.model.AudioThread;
+import lee.com.audiotalkie.audio.AudioThread;
 import lee.com.audiotalkie.model.RecordConfig;
 
 /**
@@ -47,16 +47,15 @@ public class RecordThread extends Thread implements AudioThread {
     @Override
     public void init() {
         minRecordBufferSize = 480;
-        final int recordBufferSize = AudioRecord.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_IN_CONFIG,
-                RecordConfig
-                .AUDIO_FORMAT);
+        final int recordBufferSize = AudioRecord.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ.getValue(), RecordConfig.CHANNEL_IN_CONFIG.getValue(),
+                RecordConfig.AUDIO_FORMAT.getValue());
         Log.e(TAG, "AudioRecord minRecordBufferSize = " + minRecordBufferSize);
 
         audioRecord = new AudioRecord(
                 MediaRecorder.AudioSource.VOICE_COMMUNICATION,
-                RecordConfig.SAMPLE_RATE_INHZ,
-                RecordConfig.CHANNEL_IN_CONFIG,
-                RecordConfig.AUDIO_FORMAT,
+                RecordConfig.SAMPLE_RATE_INHZ.getValue(),
+                RecordConfig.CHANNEL_IN_CONFIG.getValue(),
+                RecordConfig.AUDIO_FORMAT.getValue(),
                 recordBufferSize);
 
         //    STATE_INITIALIZED:1, 初始化成功，等待被使用；    STATE_UNINITIALIZED:0, 初始化失败。
@@ -78,7 +77,7 @@ public class RecordThread extends Thread implements AudioThread {
 
         if (null != audioRecord)
             audioRecord.startRecording();
-        if (isPark){
+        if (isPark) {
             isPark = false;
             LockSupport.unpark(this);
         }
@@ -111,7 +110,7 @@ public class RecordThread extends Thread implements AudioThread {
         Log.d(TAG, "RecordThread running ------------");
         while (isRecording) {
             Log.d(TAG, "Recording ------------");
-            if (isPark){
+            if (isPark) {
                 LockSupport.park();
             }
             int bufferReadResult = audioRecord.read(recordBuffer, 0, minRecordBufferSize);

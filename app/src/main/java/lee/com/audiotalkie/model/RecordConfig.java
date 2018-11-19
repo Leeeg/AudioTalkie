@@ -4,7 +4,7 @@ import android.media.AudioFormat;
 import android.media.MediaRecorder;
 
 
-public class RecordConfig {
+public enum RecordConfig {
     /**
      * AudioRecord
      * .
@@ -38,7 +38,7 @@ public class RecordConfig {
      * ...............
      * .
      * AudioTrack
-     *
+     * <p>
      * - streamType：音频流的类型
      * AudioManager.STREAM_VOICE_CALL:电话的音频流
      * AudioManager.STREAM_SYSTEM:系统的音频流
@@ -61,8 +61,8 @@ public class RecordConfig {
      * AudioFormat.ENCODING_PCM_FLOAT：单精度浮点样本
      * .
      * - bufferSizeInBytes：缓冲区的大小
-     *      该缓冲区是为了存放需要回放的音频流数据，单位为字节。AudioTrack实例不断的从该缓冲区内读取写入的音频流数据，然后播放出来。它的大小应该是框架层尺寸的数倍。
-     *      如果该声轨的创建模式是"AudioTrack.MODE_STATIC"，
+     * 该缓冲区是为了存放需要回放的音频流数据，单位为字节。AudioTrack实例不断的从该缓冲区内读取写入的音频流数据，然后播放出来。它的大小应该是框架层尺寸的数倍。
+     * 如果该声轨的创建模式是"AudioTrack.MODE_STATIC"，
      * .
      * - mode：流或者是静态缓存
      * AudioTrack.MODE_STATIC:创建模式-在音频开始播放之前，音频数据仅仅只会从Java层写入到本地层中一次。即开始播放前一次性写入音频数据。
@@ -71,16 +71,28 @@ public class RecordConfig {
 
 
     // 音频获取源
-    public static final int MIC = MediaRecorder.AudioSource.MIC;
+    MIC(MediaRecorder.AudioSource.VOICE_COMMUNICATION),
 
     //采样率，现在能够保证在所有设备上使用的采样率是44100Hz, 但是其他的采样率（22050, 16000, 11025）在一些设备上也可以使用。
-    public static final int SAMPLE_RATE_INHZ = 8000;
+    SAMPLE_RATE_INHZ(8000),
 
     //采集声道数，CHANNEL_IN_STEREO为双声道，CHANNEL_CONFIGURATION_MONO为单声道. 其中CHANNEL_IN_MONO是可以保证在所有设备能够使用的。
-    public static final int CHANNEL_IN_CONFIG = AudioFormat.CHANNEL_IN_MONO;
+    CHANNEL_IN_CONFIG(AudioFormat.CHANNEL_IN_MONO),
 
-    public static final int CHANNEL_OUT_CONFIG = AudioFormat.CHANNEL_OUT_MONO;
+    CHANNEL_OUT_CONFIG(AudioFormat.CHANNEL_OUT_MONO),
 
     //音频数据格式:PCM 16位每个样本。保证设备支持。PCM 8位每个样本。不一定能得到设备支持
-    public static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
+    AUDIO_FORMAT(AudioFormat.ENCODING_PCM_16BIT);
+
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    RecordConfig(int value) {
+        this.value = value;
+    }
+
 }

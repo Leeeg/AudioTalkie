@@ -51,20 +51,20 @@ public class VoiceManagerE {
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void initManager() {
-        minRecordBufferSize = AudioRecord.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_IN_CONFIG, RecordConfig.AUDIO_FORMAT);
+        minRecordBufferSize = AudioRecord.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ.getValue(), RecordConfig.CHANNEL_IN_CONFIG.getValue(), RecordConfig.AUDIO_FORMAT.getValue());
 //        minRecordBufferSize = 480;
         audioRecord = new AudioRecord(
-                RecordConfig.MIC,
-                RecordConfig.SAMPLE_RATE_INHZ,
-                RecordConfig.CHANNEL_IN_CONFIG,
-                RecordConfig.AUDIO_FORMAT,
+                RecordConfig.MIC.getValue(),
+                RecordConfig.SAMPLE_RATE_INHZ.getValue(),
+                RecordConfig.CHANNEL_IN_CONFIG.getValue(),
+                RecordConfig.AUDIO_FORMAT.getValue(),
                 minRecordBufferSize);
 
         //    STATE_INITIALIZED:1, 初始化成功，等待被使用；    STATE_UNINITIALIZED:0, 初始化失败。
         int recordState = audioRecord.getState();
         Log.e(TAG, "AudioRecord init state = " + recordState);
 
-        minTrackBufferSize = AudioTrack.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ, RecordConfig.CHANNEL_OUT_CONFIG, RecordConfig.AUDIO_FORMAT);
+        minTrackBufferSize = AudioTrack.getMinBufferSize(RecordConfig.SAMPLE_RATE_INHZ.getValue(), RecordConfig.CHANNEL_OUT_CONFIG.getValue(), RecordConfig.AUDIO_FORMAT.getValue());
 //        final int minRecordBufferSize = 480;
         audioTrack = new AudioTrack(
                 new AudioAttributes.Builder()
@@ -72,9 +72,9 @@ public class VoiceManagerE {
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                         .build(),
                 new AudioFormat.Builder()
-                        .setSampleRate(RecordConfig.SAMPLE_RATE_INHZ)
-                        .setChannelMask(RecordConfig.CHANNEL_OUT_CONFIG)
-                        .setEncoding(RecordConfig.AUDIO_FORMAT)
+                        .setSampleRate(RecordConfig.SAMPLE_RATE_INHZ.getValue())
+                        .setChannelMask(RecordConfig.CHANNEL_OUT_CONFIG.getValue())
+                        .setEncoding(RecordConfig.AUDIO_FORMAT.getValue())
                         .build(),
                 minTrackBufferSize,
                 AudioTrack.MODE_STREAM,

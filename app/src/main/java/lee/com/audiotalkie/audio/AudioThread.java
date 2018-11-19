@@ -1,4 +1,4 @@
-package lee.com.audiotalkie.model;
+package lee.com.audiotalkie.audio;
 
 /**
  * CreateDate：18-11-7 on 下午3:02

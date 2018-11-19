@@ -19,7 +19,7 @@ public interface TalkiePresenter extends BasePresenter {
 
     void opusDecode();
 
-    void socketInit(String ip);
+    void socketInit(String ip, int port);
 
     void TcpClose();
 

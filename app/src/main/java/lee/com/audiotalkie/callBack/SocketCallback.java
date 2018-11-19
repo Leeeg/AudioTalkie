@@ -17,4 +17,5 @@ public interface SocketCallback {
 
     void tcpError(String msg);
 
+
 }

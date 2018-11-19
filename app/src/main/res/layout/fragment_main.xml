@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
@@ -11,110 +10,143 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_log"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/edit_ip"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_height="0dp"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin" />
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_weight="1" />
 
-    <EditText
-        android:hint="IP"
-        android:id="@+id/edit_ip"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bt_udp_test"
-        android:layout_centerHorizontal="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <Button
-        android:id="@+id/bt_record_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bt_track_start"
-        android:layout_alignParentLeft="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="RecordStart" />
+        <TextView
+            android:id="@+id/count_catch"
+            android:background="@color/colorAccent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:minWidth="30dp"
+            android:minHeight="30dp" />
 
-    <Button
-        android:id="@+id/bt_record_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bt_track_start"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="RecordStop" />
 
-    <Button
-        android:id="@+id/bt_track_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bt_tcp_connect"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="TrackStart" />
+        <Button
+            android:id="@+id/bt_voice"
+            android:background="@drawable/button_voice_sl"
+            android:layout_margin="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/bt_track_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bt_tcp_connect"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="TrackStop" />
+    </FrameLayout>
 
-    <Button
-        android:id="@+id/bt_tcp_connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/layout_operation"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:text="InitSocket" />
-
-    <Button
-        android:id="@+id/bt_tcp_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:text="TcpClose" />
-
-    <Button
-        android:id="@+id/bt_tcp_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bt_record_start"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:text="TcpTest" />
-
-    <Button
-        android:id="@+id/bt_udp_test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/bt_record_start"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:text="UdpTest" />
+        android:layout_weight="1">
 
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/edit_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bt_udp_test"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:hint="IP" />
+
+        <Button
+            android:id="@+id/bt_record_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bt_track_start"
+            android:layout_alignParentLeft="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="RecordStart" />
+
+        <Button
+            android:id="@+id/bt_record_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bt_track_start"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="RecordStop" />
+
+        <Button
+            android:id="@+id/bt_track_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bt_tcp_connect"
+            android:layout_alignParentLeft="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="TrackStart" />
+
+        <Button
+            android:id="@+id/bt_track_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bt_tcp_connect"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="TrackStop" />
+
+        <Button
+            android:id="@+id/bt_tcp_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:text="InitSocket" />
+
+        <Button
+            android:id="@+id/bt_tcp_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:text="TcpClose" />
+
+        <Button
+            android:id="@+id/bt_tcp_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bt_record_start"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:text="TcpTest" />
+
+        <Button
+            android:id="@+id/bt_udp_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bt_record_start"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:text="UdpTest" />
+
+    </RelativeLayout>
+
+</LinearLayout>
