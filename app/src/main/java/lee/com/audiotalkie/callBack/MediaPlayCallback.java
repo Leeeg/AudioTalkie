@@ -1,4 +1,4 @@
-package lee.com.audiotalkie.model;
+package lee.com.audiotalkie.callBack;
 
 public interface MediaPlayCallback {
 

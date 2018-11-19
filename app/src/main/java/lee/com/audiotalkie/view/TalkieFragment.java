@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import lee.com.audiotalkie.R;
 import lee.com.audiotalkie.TalkieApplication;
 import lee.com.audiotalkie.presenter.LogAdapter;
 import lee.com.audiotalkie.presenter.TalkiePresenter;
+import lee.com.audiotalkie.utils.DataUtil;
 
 public class TalkieFragment extends Fragment implements TalkieView {
 
@@ -36,7 +38,8 @@ public class TalkieFragment extends Fragment implements TalkieView {
     private RecyclerView recyclerView;
     private LogAdapter logAdapter;
     private List<String> logList = new ArrayList<>();
-    private Button recordStart, recordStop, socketConnect, socketClose;
+    private Button recordStart, recordStop, trackStart, trackStop, socketConnect, socketClose;
+    private EditText ipEdit;
 
 
     public static TalkieFragment newInstance(String param1, String param2) {
@@ -69,14 +72,18 @@ public class TalkieFragment extends Fragment implements TalkieView {
         layoutManager.setOrientation(OrientationHelper.VERTICAL);
         logAdapter = new LogAdapter(logList);
         recyclerView.setAdapter(logAdapter);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setItemAnimator(null);
 
         recordStart = rootView.findViewById(R.id.bt_record_start);
         recordStop = rootView.findViewById(R.id.bt_record_stop);
+        trackStart = rootView.findViewById(R.id.bt_track_start);
+        trackStop = rootView.findViewById(R.id.bt_track_stop);
         socketConnect = rootView.findViewById(R.id.bt_tcp_connect);
         socketClose = rootView.findViewById(R.id.bt_tcp_close);
+        ipEdit = rootView.findViewById(R.id.edit_ip);
         socketClose.setEnabled(false);
         recordStop.setEnabled(false);
+        trackStop.setEnabled(false);
         recordStart.setOnClickListener((v) -> {
             recordStart.setEnabled(false);
             presenter.recordStart();
@@ -87,10 +94,22 @@ public class TalkieFragment extends Fragment implements TalkieView {
             presenter.recordStop();
             recordStart.setEnabled(true);
         });
+        trackStart.setOnClickListener((v) -> {
+            trackStart.setEnabled(false);
+            presenter.trackStart();
+            trackStop.setEnabled(true);
+        });
+        trackStop.setOnClickListener((v) -> {
+            trackStop.setEnabled(false);
+            presenter.trackStop();
+            trackStart.setEnabled(true);
+        });
         socketConnect.setOnClickListener((v) -> {
-            socketConnect.setEnabled(false);
-            presenter.socketInit();
-            socketClose.setEnabled(true);
+            if (null != ipEdit.getText() && !ipEdit.getText().toString().trim().isEmpty()){
+                socketConnect.setEnabled(false);
+                presenter.socketInit(ipEdit.getText().toString().trim());
+                socketClose.setEnabled(true);
+            }
         });
         socketClose.setOnClickListener((v) -> {
             socketConnect.setEnabled(true);
@@ -100,6 +119,10 @@ public class TalkieFragment extends Fragment implements TalkieView {
         rootView.findViewById(R.id.bt_tcp_test).setOnClickListener((v) -> presenter.TcpTest());
         rootView.findViewById(R.id.bt_udp_test).setOnClickListener((v) -> presenter.UdpTest());
 
+        String ip = DataUtil.getLocalIpAddress();
+        System.out.println("ip =  " + ip);
+
+        ipEdit.setText(ip);
         return rootView;
     }
 

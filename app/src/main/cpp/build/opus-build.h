@@ -1,6 +1,3 @@
-//
-// Created by xiaofeng on 2018/4/13.
-//
 
 #ifndef MYAPPLICATION_OPUS_BUILD_H
 #include <opus.h>

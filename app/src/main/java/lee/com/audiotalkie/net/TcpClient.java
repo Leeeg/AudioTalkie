@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import lee.com.audiotalkie.model.SocketCallback;
+import lee.com.audiotalkie.callBack.SocketCallback;
 
 /**
  * CreateDate：18-10-19 on 上午10:22
@@ -46,7 +46,7 @@ public class TcpClient {
         private Socket socket = null;
         private DataInputStream reader = null;
         private int len = 0;
-        byte buffer[] = new byte[68];
+        byte buffer[] = new byte[140];
         private String temp = "";
 
         public ClientThread() {
@@ -67,6 +67,7 @@ public class TcpClient {
                 System.out.println("socket connect failed ");
                 socketCallback.tcpError("socket connect failed ！");
             }
+            byte[] bytes;
             while (connectAble) {
                 try {
                     if (socket.isClosed() == false) {
@@ -74,10 +75,11 @@ public class TcpClient {
                             while (reader.read(buffer) != -1) {
                                 temp = "收到服务器消息——>";
                                 socketCallback.tcpAppendMsg(temp);
+                                bytes = buffer.clone();
+                                socketCallback.socketReceive(bytes);
                                 System.out.println();
                             }
                         }
-
                     } else {
                         if (socket.getKeepAlive() == false) {
                             connectAble = false;

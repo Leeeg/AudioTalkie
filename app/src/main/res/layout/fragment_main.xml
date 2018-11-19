@@ -12,19 +12,29 @@
         android:id="@+id/rv_log"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/bt_tcp_test"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_above="@id/edit_ip"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin" />
+
+    <EditText
+        android:hint="IP"
+        android:id="@+id/edit_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bt_udp_test"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"/>
 
     <Button
         android:id="@+id/bt_record_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/bt_tcp_connect"
+        android:layout_above="@id/bt_track_start"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -34,13 +44,36 @@
         android:id="@+id/bt_record_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/bt_track_start"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="RecordStop" />
+
+    <Button
+        android:id="@+id/bt_track_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bt_tcp_connect"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="TrackStart" />
+
+    <Button
+        android:id="@+id/bt_track_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@id/bt_tcp_connect"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="RecordStop" />
+        android:text="TrackStop" />
 
     <Button
         android:id="@+id/bt_tcp_connect"

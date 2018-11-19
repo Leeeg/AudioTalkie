@@ -1,20 +1,21 @@
 package lee.com.audiotalkie.presenter;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.IOException;
 
-import lee.com.audiotalkie.TalkieApplication;
-import lee.com.audiotalkie.model.MediaPlayCallback;
-import lee.com.audiotalkie.model.RecordDataCallback;
-import lee.com.audiotalkie.model.SocketCallback;
+import lee.com.audiotalkie.callBack.MediaPlayCallback;
+import lee.com.audiotalkie.callBack.RecordDataCallback;
+import lee.com.audiotalkie.callBack.SocketCallback;
 import lee.com.audiotalkie.net.TcpClient;
 import lee.com.audiotalkie.net.UdpClient;
 import lee.com.audiotalkie.utils.DataUtil;
-import lee.com.audiotalkie.utils.MediaManager;
+import lee.com.audiotalkie.audio.VoiceManager;
 import lee.com.audiotalkie.view.TalkieView;
 
 /**
@@ -22,12 +23,13 @@ import lee.com.audiotalkie.view.TalkieView;
  * Describe:
  * Coder: lee
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, RecordDataCallback, SocketCallback {
 
     private final String TAG = "Lee_log_TalkiePresenterImpl";
     private TalkieView mView;
 
-    private MediaManager recordManager;
+    private VoiceManager voiceManager;
 
     private TcpClient tcpClient = null;
     private UdpClient udpClient = null;
@@ -47,17 +49,22 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
                     mView.logAdd(msg.obj.toString());
                     mView.socketReset();
                     break;
+                case 3:
+                    mView.logAdd("tracking : trackData.length = " + ((byte[]) msg.obj).length);
+                    break;
             }
         }
     };
 
+    @SuppressLint("LongLogTag")
     public TalkiePresenterImpl(TalkieView mView) {
 
         this.mView = mView;
         mView.setPresenter(this);
 
-        recordManager = TalkieApplication.getInstance().getRecordManager();
-        recordManager.setMediaPlayerCallback(this);
+        voiceManager = VoiceManager.getInstance();
+        voiceManager.init();
+        voiceManager.addRecordCallback(this);
 
     }
 
@@ -72,7 +79,7 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         message.what = 0;
         message.obj = "start record";
         handler.sendMessage(message);
-        recordManager.startRecord(this);
+        voiceManager.startRecord();
     }
 
     @Override
@@ -81,17 +88,17 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         message.what = 0;
         message.obj = "stop record";
         handler.sendMessage(message);
-        recordManager.stopRecord();
+        voiceManager.stopRecord();
     }
 
     @Override
     public void trackStart() {
-
+        voiceManager.startTrack();
     }
 
     @Override
     public void trackStop() {
-
+        voiceManager.stopTrack();
     }
 
     @Override
@@ -106,15 +113,13 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
 
     @SuppressLint("LongLogTag")
     @Override
-    public void socketInit() {
-        String ip = DataUtil.getLocalIpAddress();
-        Log.d(TAG, "local ip = " + ip);
-        if (null == tcpClient)
-            tcpClient = new TcpClient("192.168.0.16", 8888, this);
-        tcpClient.initSocket();
+    public void socketInit(String ip) {
+//        if (null == tcpClient)
+//            tcpClient = new TcpClient(ip, 8888, this);
+//        tcpClient.initSocket();
 
         if (null == udpClient)
-            udpClient = new UdpClient("192.168.0.16", 8889);
+            udpClient = new UdpClient(ip, 8889, this);
         udpClient.initSocket();
     }
 
@@ -127,7 +132,7 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
     @SuppressLint("LongLogTag")
     @Override
     public void TcpTest() {
-        if (null != tcpClient.getWriter())
+        if (null != tcpClient && null != tcpClient.getWriter())
             try {
                 Log.e(TAG, "socketWrite success !");
                 tcpClient.getWriter().write("TcpTest  -----  ".getBytes());
@@ -143,7 +148,8 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         message.what = 0;
         message.obj = "send Udp test !";
         handler.sendMessage(message);
-        udpClient.getBlockingDeque().offer("Udp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp test".getBytes());
+        if (null != udpClient)
+            udpClient.getBlockingDeque().offer("Udp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp testUdp test".getBytes());
     }
 
     @SuppressLint("LongLogTag")
@@ -153,31 +159,48 @@ public class TalkiePresenterImpl implements TalkiePresenter, MediaPlayCallback, 
         message.what = 1;
         message.obj = data;
         handler.sendMessage(message);
-//        if (null != tcpClient.getWriter())
+
+        Log.e(TAG, "recordData data : " + data.length);
+        byte[] b = DataUtil.toByteArray(data);
+        Log.e(TAG, "recordData byte : " + b.length);
+//        short[] s = DataUtil.toShortArray(b);
+//        Log.e(TAG, "recordData short : " + s.length);
+
+//        socketReceive(b);
+
+//        if (null != tcpClient.getWriter()) {
 //            try {
 //                Log.e(TAG, "socketWrite success !");
-//                tcpClient.getWriter().write(DataUtil.toByteArray(data));
+//                tcpClient.getWriter().write(b);
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //                Log.e(TAG, "socketWrite error !");
 //            }
+//        }
+
         if (null != udpClient) {
-            Log.d(TAG, "short[] data : length = " + data.length);
-            byte[] mData = DataUtil.toByteArray(data);
-            Log.d(TAG, "byte[] data : length = " + mData.length);
-            udpClient.getBlockingDeque().offer(mData);
+            Log.d(TAG, "byte[] data : length = " + b.length);
+            udpClient.getBlockingDeque().offer(b);
         }
     }
 
     @SuppressLint("LongLogTag")
     @Override
     public void socketSend(String msg) {
-
     }
 
+    @SuppressLint("LongLogTag")
     @Override
-    public void socketReceive(String msg) {
+    public void socketReceive(byte[] bytes) {
+        Message message = handler.obtainMessage();
+        message.what = 3;
+        message.obj = bytes;
+        handler.sendMessage(message);
 
+        Log.i(TAG, "socketReceive !   bytes.length = " + bytes.length);
+        short[] s = DataUtil.toShortArray(bytes);
+        Log.e(TAG, "recordData short : " + s.length);
+        voiceManager.addShorts(s);
     }
 
     @Override

@@ -1,6 +1,3 @@
-//
-// Created by xiaofeng on 2018/4/13.
-//
 
 
 #include "opus-build.h"

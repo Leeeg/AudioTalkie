@@ -1,4 +1,6 @@
-package lee.com.audiotalkie.model;
+package lee.com.audiotalkie.callBack;
+
+import java.io.DataInputStream;
 
 /**
  * CreateDate：18-10-19 on 上午10:27
@@ -9,7 +11,7 @@ public interface SocketCallback {
 
     void socketSend(String msg);
 
-    void socketReceive(String msg);
+    void socketReceive(byte[] msg);
 
     void tcpAppendMsg(String msg);
 
