@@ -15,11 +15,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
@@ -27,12 +23,15 @@ import lee.com.audiotalkie.presenter.TalkiePresenterImpl
 import lee.com.audiotalkie.view.TalkieFragment
 import java.util.ArrayList
 
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class MainActivity : AppCompatActivity(), TalkieFragment.OnFragmentInteractionListener {
 
     //需要申请的运行时权限
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
     //被用户拒绝的权限列表
     private val mPermissionList = ArrayList<String>()
+
+    var fragment: TalkieFragment? = null
 
     companion object {
 
@@ -77,11 +76,10 @@ class MainActivity : AppCompatActivity(), TalkieFragment.OnFragmentInteractionLi
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun init() {
         //初始化view
-        val fragmentManager = fragmentManager
-        var fragment: TalkieFragment? = fragmentManager.findFragmentByTag(FRAGMENT_TAG) as? TalkieFragment
+//        val fragmentManager = fragmentManager
+//        fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG) as TalkieFragment
         if (fragment == null) {
             fragment = TalkieFragment.newInstance("", "")
             fragmentManager.beginTransaction().add(R.id.fl_container, fragment, FRAGMENT_TAG).commit()
@@ -89,6 +87,20 @@ class MainActivity : AppCompatActivity(), TalkieFragment.OnFragmentInteractionLi
 
         //初始化presenter
         TalkiePresenterImpl(fragment)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_ENTER && event!!.repeatCount == 0){
+            fragment!!.onKeyDown()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_ENTER && event!!.repeatCount == 0){
+            fragment!!.onKeyUp()
+        }
+        return super.onKeyUp(keyCode, event)
     }
 
     private fun checkPermissions() {

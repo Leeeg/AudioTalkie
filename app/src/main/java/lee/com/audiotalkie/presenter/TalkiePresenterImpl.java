@@ -58,6 +58,9 @@ public class TalkiePresenterImpl implements TalkiePresenter, RecordDataCallback,
                 case 3:
                     mView.logAdd("tracking : trackData.length = " + ((byte[]) msg.obj).length);
                     break;
+                case 4:
+                    mView.setCatchCount((long)msg.obj);
+                    break;
             }
         }
     };
@@ -71,6 +74,7 @@ public class TalkiePresenterImpl implements TalkiePresenter, RecordDataCallback,
         voiceManager = VoiceManager.getInstance();
         voiceManager.init();
         voiceManager.addRecordCallback(this);
+        voiceManager.addMyTrackCallback(this);
 
     }
 
@@ -80,8 +84,10 @@ public class TalkiePresenterImpl implements TalkiePresenter, RecordDataCallback,
         message.what = 0;
         message.obj = "start record";
         handler.sendMessage(message);
-        isSpeaking = true;
-        voiceManager.startRecord();
+        if (!isListening){
+            isSpeaking = true;
+            voiceManager.startRecord();
+        }
     }
 
     @Override
@@ -180,8 +186,8 @@ public class TalkiePresenterImpl implements TalkiePresenter, RecordDataCallback,
         message.obj = data;
         handler.sendMessage(message);
 
+//        LogUtil.i("recordData : ", "" + data.length);
         Log.e(TAG, "recordData data : " + data.length);
-        LogUtil.i("recordData : ", "" + data.length);
         byte[] b = DataUtil.toByteArray(data);
         Log.e(TAG, "recordData byte : " + b.length);
 
@@ -246,7 +252,10 @@ public class TalkiePresenterImpl implements TalkiePresenter, RecordDataCallback,
 
     @Override
     public void catchCount(long count) {
-        mView.setCatchCount(count);
+        Message message = handler.obtainMessage();
+        message.what = 4;
+        message.obj = count;
+        handler.sendMessage(message);
     }
 
 }

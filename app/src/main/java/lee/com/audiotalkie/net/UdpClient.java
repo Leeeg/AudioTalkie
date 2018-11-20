@@ -1,7 +1,5 @@
 package lee.com.audiotalkie.net;
 
-import android.content.Context;
-import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -14,7 +12,6 @@ import java.net.UnknownHostException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import lee.com.audiotalkie.TalkieApplication;
 import lee.com.audiotalkie.callBack.SocketCallback;
 
 /**
@@ -26,7 +23,7 @@ public class UdpClient {
 
     private String host;
     private int port;
-    private DatagramSocket outDatagramSocket = null;
+    private DatagramSocket datagramSocket = null;
     private DatagramSocket inDatagramSocket = null;
     private InetSocketAddress inetSocketAddress = null;
     private byte[] buffer = new byte[256];
@@ -36,7 +33,10 @@ public class UdpClient {
     private BlockingDeque<byte[]> blockingDeque = new LinkedBlockingDeque<>(1000);
     private int count;
 
+
     public UdpClient(String host, int port, SocketCallback socketCallback) {
+//        this.host = "192.168.0.16";
+//        this.port = 8887;
         this.host = host;
         this.port = port;
         this.socketCallback = socketCallback;
@@ -49,15 +49,30 @@ public class UdpClient {
 
     public void initSocket() {
 
-        new UdpSendThread().start();
+        try {
 
-        new UdpReceiveThread().start();
+            datagramSocket = new DatagramSocket();
+            local = InetAddress.getByName(host);
+            inPacket = new DatagramPacket(buffer, buffer.length);
+
+            new UdpSendThread().start();
+
+            new UdpReceiveThread().start();
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+            Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+        }
+
     }
 
     private void sendUdp(byte[] data) {
         outPacket = new DatagramPacket(data, data.length, local, port);
         try {
-            outDatagramSocket.send(outPacket);
+            datagramSocket.send(outPacket);
         } catch (IOException e) {
             Log.e("UdpClient : ", "sendUdp ERROR : " + e);
             e.printStackTrace();
@@ -68,22 +83,12 @@ public class UdpClient {
         @Override
         public void run() {
             Log.d("UdpClient : ", "UdpSendThread running ------------------ ");
-            try {
-                outDatagramSocket = new DatagramSocket();
-                local = InetAddress.getByName(host);
-            } catch (SocketException e) {
-                Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
-                e.printStackTrace();
-            } catch (UnknownHostException e) {
-                Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
-                e.printStackTrace();
-            }
             byte[] data;
             while (true) {
                 try {
                     data = blockingDeque.takeFirst();
                     if (null != data) {
-                        System.out.println(" 发送数据 ： length = " + data.length + "           count = " + (count += data.length));
+                        System.out.println(" 发送数据 ： length = " + data.length + "           count = " + count ++);
                         sendUdp(data);
                     }
                 } catch (InterruptedException e) {
@@ -98,22 +103,21 @@ public class UdpClient {
         @Override
         public void run() {
             Log.d("UdpClient : ", "UdpReceiveThread running ----------------- ");
-            try {
-                WifiManager manager = (WifiManager) TalkieApplication.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                manager.createMulticastLock("UDPWifi");
+//            try {
+//                WifiManager manager = (WifiManager) TalkieApplication.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//                manager.createMulticastLock("UDPWifi");
 //                inetSocketAddress = new InetSocketAddress(port);
-                inDatagramSocket = new DatagramSocket(port);
-                inDatagramSocket.setBroadcast(true);
-                inPacket = new DatagramPacket(buffer, buffer.length);
-            } catch (SocketException e) {
-                Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
-                e.printStackTrace();
-            }
+//                inDatagramSocket = new DatagramSocket(port);
+//                inDatagramSocket.setBroadcast(true);
+//            } catch (SocketException e) {
+//                Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+//                e.printStackTrace();
+//            }
             byte[] data;
             while (true) {
                 try {
-                    inDatagramSocket.receive(inPacket);
-                    System.out.println(" 收到数据 ： length = " + inPacket.getLength() + "           count = " + (count += inPacket.getLength()));
+                    datagramSocket.receive(inPacket);
+                    System.out.println(" 收到数据 ： length = " + inPacket.getLength() + "           count = " + count ++);
                     data = new byte[inPacket.getLength()];
                     System.arraycopy(inPacket.getData(), inPacket.getOffset(), data, 0, inPacket.getLength());
                     socketCallback.socketReceive(data);

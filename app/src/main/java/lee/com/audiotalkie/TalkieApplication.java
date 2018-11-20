@@ -22,7 +22,7 @@ public class TalkieApplication extends Application {
         super.onCreate();
         application = this;
 
-        LogUtil.init(application.getApplicationContext());
+//        LogUtil.init(application.getApplicationContext());
 
     }
 

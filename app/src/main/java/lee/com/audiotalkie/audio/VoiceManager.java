@@ -5,6 +5,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import lee.com.audiotalkie.OpusJni;
+import lee.com.audiotalkie.callBack.MyTrackCallback;
 import lee.com.audiotalkie.callBack.RecordDataCallback;
 
 
@@ -49,6 +50,7 @@ public class VoiceManager {
         trackThread = new TrackThread();
         trackThread.start();
 
+        trackThread.begin();
     }
 
     public void startRecord() {
@@ -81,6 +83,18 @@ public class VoiceManager {
 
     public void addRecordCallback(RecordDataCallback recordDataCallback) {
         recordThread.addRecordDataCallback(recordDataCallback);
+    }
+
+    public void removeRecordCallback(){
+        recordThread.removeRecordDataCallback();
+    }
+
+    public void addMyTrackCallback(MyTrackCallback myTrackCallback){
+        trackThread.addMyTrackCallback(myTrackCallback);
+    }
+
+    public void removeMyTrackCallback(){
+        trackThread.removeMyTrackCallback();
     }
 
     public void release() {

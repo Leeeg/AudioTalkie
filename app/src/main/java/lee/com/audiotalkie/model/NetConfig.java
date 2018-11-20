@@ -9,7 +9,7 @@ public enum  NetConfig {
 
     HOST("47.106.204.40"),
 //    HOST("192.168.0.6"),
-    PORT("8888");
+    PORT("8886");
 
 
     private String value;

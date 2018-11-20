@@ -134,7 +134,8 @@ public class TrackThread extends Thread implements AudioThread {
                 Log.d(TAG, "Playing -------------- ");
                 short[] shortBuffer = blockingDeque.takeFirst();
                 Log.i(TAG, "blockingDeque.size() = " + blockingDeque.size());
-                myTrackCallback.catchCount(blockingDeque.size());
+                if (null != myTrackCallback)
+                    myTrackCallback.catchCount(blockingDeque.size());
                 if (isPark) {
                     if (0 < blockingDeque.size()) {
                         blockingDeque.clear();

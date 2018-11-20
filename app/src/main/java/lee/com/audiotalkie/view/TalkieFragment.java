@@ -150,8 +150,6 @@ public class TalkieFragment extends Fragment implements TalkieView {
 
         presenter.socketInit(NetConfig.HOST.getValue(), Integer.parseInt(NetConfig.PORT.getValue()));
 
-        presenter.UdpTest();
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -159,6 +157,14 @@ public class TalkieFragment extends Fragment implements TalkieView {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    public void onKeyDown(){
+        presenter.recordStart();
+    }
+
+    public void onKeyUp(){
+        presenter.recordStop();
     }
 
     @Override
@@ -226,5 +232,6 @@ public class TalkieFragment extends Fragment implements TalkieView {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 
 }
