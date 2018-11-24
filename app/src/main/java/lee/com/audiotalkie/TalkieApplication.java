@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
+import lee.com.audiotalkie.utils.LogUtil;
+
 
 public class TalkieApplication extends Application {
 

@@ -50,7 +50,7 @@ public class LogUtil {
      * @param context
      */
     public static void init(Context context) {
-        logPath = getFilePath(context) + "/Logs/AutoRegistration";//获得文件储存路径,在后面加"/Logs"建立子文件夹
+        logPath = getFilePath(context) + "/Logs/AudioTalkie";//获得文件储存路径,在后面加"/Logs"建立子文件夹
         System.out.println(logPath);
     }
 
