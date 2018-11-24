@@ -8,14 +8,14 @@ import java.io.DataInputStream;
  * Coder: lee
  */
 public interface SocketCallback {
-
-    void socketSend(String msg);
+//
+//    void socketSend(String msg);
 
     void socketReceive(byte[] msg);
 
-    void tcpAppendMsg(String msg);
-
-    void tcpError(String msg);
+//    void tcpAppendMsg(String msg);
+//
+//    void tcpError(String msg);
 
 
 }

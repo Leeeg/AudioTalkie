@@ -9,7 +9,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import lee.com.audiotalkie.OpusJni;
+import lee.com.audiotalkie.Jni;
 import lee.com.audiotalkie.callBack.RecordDataCallback;
 import lee.com.audiotalkie.model.RecordConfig;
 import lee.com.audiotalkie.utils.DataUtil;
@@ -86,7 +86,7 @@ public class VoiceManagerE {
         int trackState = audioTrack.getState();
         Log.e(TAG, "AudioTrack init state = " + trackState);
 
-        int opusState = OpusJni.initOpus();
+        int opusState = Jni.initOpus();
         Log.e(TAG, "OPUS init state = " + opusState);
 
     }
@@ -117,13 +117,13 @@ public class VoiceManagerE {
 
                         if (bufferReadResult == minRecordBufferSize) {
                             Log.i(TAG, "recording ---- encode  >>");
-                            short[] encoderShort = OpusJni.opusEncoder(recordBuffer, bufferReadResult);
+                            short[] encoderShort = Jni.opusEncoder(recordBuffer, bufferReadResult);
                             Log.i(TAG, "recording ---- encode  << \n");
 
 //                            recordDataCallback.recordData(encoderShort);
 
 //                            Log.i(TAG, "recording ---- decode  >>");
-                            short[] decodeShort = OpusJni.opusDecode(encoderShort, encoderShort.length, bufferReadResult);
+                            short[] decodeShort = Jni.opusDecode(encoderShort, encoderShort.length, bufferReadResult);
 //                            Log.i(TAG, "recording ---- decode  << \n");
 
                         }
@@ -171,9 +171,9 @@ public class VoiceManagerE {
 //                                continue;
 //                            }
 //                            if (readCount != 0 && readCount != -1) {
-                            short[] shortBuffer = DataUtil.toShortArray(bytes);
-                            short[] decodeShort = OpusJni.opusDecode(shortBuffer, shortBuffer.length, minRecordBufferSize);
-                            audioTrack.write(decodeShort, 0, minRecordBufferSize);
+//                            short[] shortBuffer = DataUtil.toShortArray(bytes);
+//                            short[] decodeShort = Jni.opusDecode(shortBuffer, shortBuffer.length, minRecordBufferSize);
+//                            audioTrack.write(decodeShort, 0, minRecordBufferSize);
                         }
 //                        }
                     } catch (Exception e) {

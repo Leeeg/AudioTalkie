@@ -14,7 +14,10 @@ aux_source_directory(src/main/cpp/celt LIB_CELT)
 aux_source_directory(src/main/cpp/silk LIB_SILK)
 aux_source_directory(src/main/cpp/silk/float LIB_SILK_FLOAT)
 aux_source_directory(src/main/cpp/src LIB_SRC)
-include_directories(src/main/cpp/include src/main/cpp/celt src/main/cpp/silk src/main/cpp/silk/float src/main/cpp/src src/main/cpp/build)
+aux_source_directory(src/main/cpp/net LIB_SRC)
+aux_source_directory(src/main/cpp/util LIB_SRC)
+include_directories(src/main/cpp/include src/main/cpp/celt src/main/cpp/silk
+ src/main/cpp/silk/float src/main/cpp/src src/main/cpp/build src/main/cpp/net src/main/cpp/util)
 
 add_library( # Sets the name of the library.
              native-lib

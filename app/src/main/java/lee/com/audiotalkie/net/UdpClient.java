@@ -8,11 +8,15 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import lee.com.audiotalkie.Jni;
 import lee.com.audiotalkie.callBack.SocketCallback;
+import lee.com.audiotalkie.model.RTPPackage;
+import lee.com.audiotalkie.utils.ByteUtil;
 
 /**
  * CreateDate：18-10-25 on 上午10:17
@@ -20,6 +24,8 @@ import lee.com.audiotalkie.callBack.SocketCallback;
  * Coder: lee
  */
 public class UdpClient {
+
+    private final String TAG = "Lee_UdpClient";
 
     private String host;
     private int port;
@@ -30,21 +36,21 @@ public class UdpClient {
     private InetAddress local = null;
     private DatagramPacket outPacket, inPacket;
     private SocketCallback socketCallback;
-    private BlockingDeque<byte[]> blockingDeque = new LinkedBlockingDeque<>(1000);
-    private int count;
+    private BlockingDeque<RTPPackage> blockingDeque = new LinkedBlockingDeque<>(1000);
+    private int inCount, outCount;
 
 
     public UdpClient(String host, int port, SocketCallback socketCallback) {
-//        this.host = "192.168.0.16";
-//        this.port = 8887;
-        this.host = host;
-        this.port = port;
+        this.host = "192.168.0.16";
+        this.port = 8887;
+//        this.host = host;
+//        this.port = port;
         this.socketCallback = socketCallback;
-        Log.e("UdpClient : ", "host = " + host + "    port = " + port);
+        Log.e(TAG, "host = " + host + "    port = " + port);
     }
 
-    public BlockingDeque<byte[]> getBlockingDeque() {
-        return blockingDeque;
+    public void addRTPPacket(RTPPackage rtpPackage) {
+        blockingDeque.offer(rtpPackage);
     }
 
     public void initSocket() {
@@ -70,12 +76,17 @@ public class UdpClient {
     }
 
     private void sendUdp(byte[] data) {
+        Log.d(TAG, "on udp send :" + " dataLen = " + data.length + "   count = " + outCount++);
         outPacket = new DatagramPacket(data, data.length, local, port);
         try {
             datagramSocket.send(outPacket);
         } catch (IOException e) {
-            Log.e("UdpClient : ", "sendUdp ERROR : " + e);
-            e.printStackTrace();
+            if (null != e && e.toString().contains("")) {
+                Log.d("UdpClient : ", "sendUdp failed : Network is unreachable !");
+            } else {
+                Log.e("UdpClient : ", "sendUdp ERROR : " + e);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -83,13 +94,21 @@ public class UdpClient {
         @Override
         public void run() {
             Log.d("UdpClient : ", "UdpSendThread running ------------------ ");
-            byte[] data;
+            RTPPackage rtpPackage;
+            byte[] rtpData = null;
+            byte[] rtpHeardData;
             while (true) {
                 try {
-                    data = blockingDeque.takeFirst();
-                    if (null != data) {
-                        System.out.println(" 发送数据 ： length = " + data.length + "           count = " + count ++);
-                        sendUdp(data);
+                    rtpPackage = blockingDeque.takeFirst();
+                    if (null != rtpPackage) {
+                        rtpHeardData = Jni.getHeaderBytes(rtpPackage.getTimestamp(),
+                                rtpPackage.getSeq(),
+                                rtpPackage.getSsrc(),
+                                rtpPackage.getLen(),
+                                rtpPackage.getUserId(),
+                                rtpPackage.getTargetId());
+                        Log.d(TAG, "on udp send :" + " heardLen " + rtpHeardData.length + "   payloadLen ： " + rtpPackage.getOpusData().length);
+                        sendUdp(ByteUtil.byteMerger(rtpData, rtpHeardData, rtpPackage.getOpusData()));
                     }
                 } catch (InterruptedException e) {
                     Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
@@ -117,10 +136,13 @@ public class UdpClient {
             while (true) {
                 try {
                     datagramSocket.receive(inPacket);
-                    System.out.println(" 收到数据 ： length = " + inPacket.getLength() + "           count = " + count ++);
+
+                    System.out.println(" 收到数据 ： length = " + inPacket.getLength() + "           count = " + inCount++);
+
                     data = new byte[inPacket.getLength()];
                     System.arraycopy(inPacket.getData(), inPacket.getOffset(), data, 0, inPacket.getLength());
                     socketCallback.socketReceive(data);
+
                 } catch (IOException e) {
                     Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
                     e.printStackTrace();
@@ -128,5 +150,6 @@ public class UdpClient {
             }
         }
     }
+
 
 }

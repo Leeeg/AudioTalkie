@@ -58,14 +58,12 @@ public class TcpClient {
             super.run();
             try {
                 socket = new Socket(host, port);
-                socketCallback.tcpAppendMsg("已连上服务器");
                 writer = new DataOutputStream(socket.getOutputStream());
                 reader = new DataInputStream(socket.getInputStream());
                 System.out.println("客户端子线程" + this.getId() + "开始工作");
             } catch (IOException e) {
                 connectAble = false;
                 System.out.println("socket connect failed ");
-                socketCallback.tcpError("socket connect failed ！");
             }
             byte[] bytes;
             while (connectAble) {
@@ -74,7 +72,6 @@ public class TcpClient {
                         if (socket.isInputShutdown() == false) {
                             while (reader.read(buffer) != -1) {
                                 temp = "收到服务器消息——>";
-                                socketCallback.tcpAppendMsg(temp);
                                 bytes = buffer.clone();
                                 socketCallback.socketReceive(bytes);
                                 System.out.println();
@@ -86,17 +83,14 @@ public class TcpClient {
                             reader.close();
                             writer.close();
                             socket.close();
-                            socketCallback.tcpAppendMsg("异常断开！");
                             this.stop();
                         }
                     }
                 } catch (IOException e) {
-                    socketCallback.tcpAppendMsg("异常断开！");
                     e.printStackTrace();
                 }
             }
             try {
-                socketCallback.tcpAppendMsg("正常断开");
                 reader.close();
                 writer.close();
                 socket.close();

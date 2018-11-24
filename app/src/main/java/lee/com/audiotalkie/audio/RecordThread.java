@@ -2,16 +2,14 @@ package lee.com.audiotalkie.audio;
 
 import android.annotation.SuppressLint;
 import android.media.AudioRecord;
-import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.concurrent.locks.LockSupport;
 
-import lee.com.audiotalkie.OpusJni;
+import lee.com.audiotalkie.Jni;
 import lee.com.audiotalkie.callBack.RecordDataCallback;
-import lee.com.audiotalkie.audio.AudioThread;
 import lee.com.audiotalkie.model.RecordConfig;
 
 /**
@@ -31,10 +29,6 @@ public class RecordThread extends Thread implements AudioThread {
     private short[] recordBuffer;
     private LinkedList<short[]> linkedList;
     private RecordDataCallback recordDataCallback;
-
-    public void removeRecordDataCallback() {
-        recordDataCallback = null;
-    }
 
     public void addRecordDataCallback(RecordDataCallback recordDataCallback) {
         this.recordDataCallback = recordDataCallback;
@@ -81,6 +75,7 @@ public class RecordThread extends Thread implements AudioThread {
             isPark = false;
             LockSupport.unpark(this);
         }
+
     }
 
     @Override
@@ -121,7 +116,7 @@ public class RecordThread extends Thread implements AudioThread {
                 Log.i(TAG, "recording ---- length = " + recordBuffer.length + "\n");
                 if (bufferReadResult == minRecordBufferSize) {
                     Log.i(TAG, "recording ---- encode  >>");
-                    short[] encoderShort = OpusJni.opusEncoder(recordBuffer, bufferReadResult);
+                    short[] encoderShort = Jni.opusEncoder(recordBuffer, bufferReadResult);
                     Log.i(TAG, "recording ---- encode  << \n");
                     shorts_pkg = encoderShort.clone();
                     if (linkedList.size() >= 2) {

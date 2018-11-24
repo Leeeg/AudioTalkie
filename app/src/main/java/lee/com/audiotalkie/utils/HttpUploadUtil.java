@@ -25,7 +25,7 @@ import java.util.Map;
  * @author H__D
  *
  */
-public class HttpUtil {
+public class HttpUploadUtil {
 
 
     // 分割符

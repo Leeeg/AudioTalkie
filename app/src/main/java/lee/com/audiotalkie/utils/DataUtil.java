@@ -15,9 +15,11 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,28 +31,6 @@ import java.util.regex.Pattern;
 public class DataUtil {
 
     private final static String TAG = "Lee_log_DataUtil";
-
-    public static byte[] toByteArray(short[] src) {
-
-        int count = src.length;
-        byte[] dest = new byte[count << 1];
-        for (int i = 0; i < count; i++) {
-            dest[i * 2] = (byte) (src[i] >> 8);
-            dest[i * 2 + 1] = (byte) (src[i] >> 0);
-        }
-
-        return dest;
-    }
-
-    public static short[] toShortArray(byte[] src) {
-
-        int count = src.length >> 1;
-        short[] dest = new short[count];
-        for (int i = 0; i < count; i++) {
-            dest[i] = (short) (src[i * 2] << 8 | src[2 * i + 1] & 0xff);
-        }
-        return dest;
-    }
 
     public static String getLocalIpAddress() {
         try {
@@ -127,8 +107,68 @@ public class DataUtil {
                 ex.printStackTrace();
             }
         }
-        Log.e("getNetIp", ipLine);
+        Log.e(TAG, "getNetIp " + ipLine);
         return ipLine;
     }
 
+
+    /**
+     * ------------------------------------------------------- 协议用 -----------------------------------------------------
+     */
+
+    public static int randomSequenceNumber(){
+        return new Random().nextInt(10);
+    }
+
+    public static short getSequenceNumber(byte[] b) {
+        if (null == b || b.length < 4){
+            Log.e(TAG, "getSequenceNumber on a bad byteArray ! ");
+            return 0;
+        }
+        return ByteUtil.byteToShort(Arrays.copyOfRange(b, 2, 4));
+
+    }
+
+    public static int getSsrc(byte[] b) {
+        if (null == b || b.length < 12){
+            Log.e(TAG, "getSsrc on a bad byteArray ! ");
+            return 0;
+        }
+        return ByteUtil.byteToInt(Arrays.copyOfRange(b, 8, 12));
+
+    }
+
+    public static short getLength(byte[] b) {
+        if (null == b || b.length < 20){
+            Log.e(TAG, "getLength on a bad byteArray ! ");
+            return 0;
+        }
+        return ByteUtil.byteToShort(Arrays.copyOfRange(b, 18, 20));
+
+    }
+
+    public static int getUserId(byte[] b) {
+        if (null == b || b.length < 28){
+            Log.e(TAG, "getUserId on a bad byteArray !");
+            return 0;
+        }
+        return ByteUtil.byteToInt(Arrays.copyOfRange(b, 20, 28));
+    }
+
+    public static int getTargetId(byte[] b) {
+        if (null == b || b.length < 36){
+            Log.e(TAG, "getTargetId on a bad byteArray !");
+            return 0;
+        }
+        return ByteUtil.byteToInt(Arrays.copyOfRange(b, 28, 36));
+    }
+
+    public static boolean getOpusData(byte[] opusBytes, byte[] b, int len) {
+        if (null == b || b.length < len){
+            Log.e(TAG, "getOpusData on a bad byteArray !");
+            return false;
+        }
+        System.arraycopy(b, b.length - len, opusBytes, 0, len);
+        return true;
+    }
 }

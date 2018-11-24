@@ -11,11 +11,12 @@ import android.util.Log;
 
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-import lee.com.audiotalkie.OpusJni;
-import lee.com.audiotalkie.audio.AudioThread;
-import lee.com.audiotalkie.callBack.MyTrackCallback;
+import lee.com.audiotalkie.Jni;
+import lee.com.audiotalkie.callBack.TrackCallback;
+import lee.com.audiotalkie.model.RTPPackage;
 import lee.com.audiotalkie.model.RecordConfig;
 
 /**
@@ -32,20 +33,16 @@ public class TrackThread extends Thread implements AudioThread {
     private AudioTrack audioTrack;
     private int minTrackBufferSize;
     private boolean isPlaying = true;
-    private BlockingDeque<short[]> blockingDeque;
+    private BlockingDeque<RTPPackage> blockingDeque;
     private boolean isPark = true;
-    private MyTrackCallback myTrackCallback;
+    private TrackCallback trackCallback;
 
-    public void removeMyTrackCallback() {
-        myTrackCallback = null;
+    public void addMyTrackCallback(TrackCallback trackCallback) {
+        this.trackCallback = trackCallback;
     }
 
-    public void addMyTrackCallback(MyTrackCallback myTrackCallback) {
-        this.myTrackCallback = myTrackCallback;
-    }
-
-    public boolean addShorts(short[] shorts) {
-        return blockingDeque.offer(shorts);
+    public boolean addPacket(RTPPackage rtpPackage) {
+        return blockingDeque.offer(rtpPackage);
     }
 
     public TrackThread() {
@@ -108,7 +105,6 @@ public class TrackThread extends Thread implements AudioThread {
         Log.d(TAG, "stopTrack");
         if (null != audioTrack)
             audioTrack.stop();
-
         if (!isPark)
             isPark = true;
     }
@@ -128,14 +124,11 @@ public class TrackThread extends Thread implements AudioThread {
     public void run() {
         Log.d(TAG, "run");
         short[] shorts_pkg;
+        short[] opusData;
         Log.d(TAG, "TrackThread running -------------- ");
         while (isPlaying) {
             try {
                 Log.d(TAG, "Playing -------------- ");
-                short[] shortBuffer = blockingDeque.takeFirst();
-                Log.i(TAG, "blockingDeque.size() = " + blockingDeque.size());
-                if (null != myTrackCallback)
-                    myTrackCallback.catchCount(blockingDeque.size());
                 if (isPark) {
                     if (0 < blockingDeque.size()) {
                         blockingDeque.clear();
@@ -143,13 +136,24 @@ public class TrackThread extends Thread implements AudioThread {
                     }
                     LockSupport.park();
                 }
-                if (null != shortBuffer) {
+                RTPPackage aPackage = blockingDeque.poll(2, TimeUnit.SECONDS);
+                Log.i(TAG, "blockingDeque.size() = " + blockingDeque.size());
+                if (null != trackCallback)
+                    trackCallback.catchCount(blockingDeque.size());
+                if (null != aPackage) {
+                    opusData = aPackage.getOpusDataByShort();
                     Log.i(TAG, "recording ---- decode  >>");
-                    Log.d(TAG, "shortBuffer ： " + shortBuffer.length);
-                    shorts_pkg = OpusJni.opusDecode(shortBuffer, shortBuffer.length, minTrackBufferSize);
-                    Log.d(TAG, "shorts_pkg ： " + shorts_pkg.length);
-                    Log.i(TAG, "recording ---- decode  << \n");
-                    audioTrack.write(shorts_pkg, 0, shorts_pkg.length);
+                    Log.d(TAG, "shortBuffer ： " + opusData.length);
+                    shorts_pkg = Jni.opusDecode(opusData, opusData.length, minTrackBufferSize);
+                    if (null != shorts_pkg){
+                        Log.d(TAG, "shorts_pkg ： " + shorts_pkg.length);
+                        Log.i(TAG, "recording ---- decode  << \n");
+                        audioTrack.write(shorts_pkg, 0, shorts_pkg.length);
+                    }else {
+                        Log.e(TAG, "recording ---- decode failed ! << \n");
+                    }
+                }else {
+                    trackCallback.playTimeOut();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

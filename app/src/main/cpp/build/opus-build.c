@@ -53,5 +53,6 @@ int close(OpusEncoder *opusEncoder, OpusDecoder *opusDecoder) {
     if (opusDecoder != NULL) {
         opus_decoder_destroy(opusDecoder);
     }
+
 }
 
