@@ -23,6 +23,8 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static lee.com.audiotalkie.model.Container.TOKEN_ERROR;
+
 /**
  * CreateDate：18-10-19 on 下午2:44
  * Describe:
@@ -171,4 +173,50 @@ public class DataUtil {
         System.arraycopy(b, b.length - len, opusBytes, 0, len);
         return true;
     }
+
+
+    public static boolean checkTokenError(byte[] data) {
+        int index = 0;
+        while (index++ < 10) {
+            if (data[index] == TOKEN_ERROR[index-1])
+                continue;
+            else
+                return false;
+        }
+        return true;
+    }
+
+    public static int checkIp(byte[] data){
+        int ip = 0x0;
+        if(data[1]==0xFF&&data[6]==0xFF){
+            ip |= data[2];
+            ip<<=8;
+            ip |= data[3];
+            ip<<=8;
+            ip |= data[4];
+            ip<<=8;
+            ip |= data[5];
+            return ip;
+        }else{
+            return -1;
+        }
+    }
+
+    // 将十进制整数形式转换成127.0.0.1形式的ip地址
+    public static String longToIP(long longIp) {
+        StringBuffer sb = new StringBuffer("");
+        // 直接右移24位
+        sb.append(String.valueOf((longIp >>> 24)));
+        sb.append(".");
+        // 将高8位置0,然后右移16位
+        sb.append(String.valueOf((longIp & 0x00FFFFFF) >>> 16));
+        sb.append(".");
+        // 将高16位置0,然后右移8位
+        sb.append(String.valueOf((longIp & 0x0000FFFF) >>> 8));
+        sb.append(".");
+        // 将高24位置0
+        sb.append(String.valueOf((longIp & 0x000000FF)));
+        return sb.toString();
+    }
+
 }

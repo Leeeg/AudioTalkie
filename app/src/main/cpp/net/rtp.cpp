@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include "rtp.h"
 
-void capsulation(int _timestamp, short seq, int _ssrc, short len, __int64_t _userId, __int64_t _targetId, char *data) {
+void capsulationHearder(int _timestamp, short seq, int _ssrc, short len, __int64_t _userId, __int64_t _targetId, char *data) {
 
     RTPFixedHeader *rtpFixedHeader = (RTPFixedHeader *) data;
 

@@ -20,8 +20,8 @@ public class TalkieManager implements RecordDataCallback, SocketCallback, TrackC
 
     private final String TAG = "Lee_TalkieManager";
     private static TalkieManager talkieManager;
-    private RecordThread recordThread;
-    private TrackThread trackThread;
+    private RecordBase recordThread;
+    private TrackBase trackThread;
     private boolean isSpeaking, isListening;
     private UdpClient udpClient = null;
 
@@ -52,10 +52,10 @@ public class TalkieManager implements RecordDataCallback, SocketCallback, TrackC
         int opusState = Jni.initOpus();
         Log.e(TAG, "OPUS init state = " + (opusState == 0 ? "success" : "failed"));
 
-        recordThread = new RecordThread();
+        recordThread = new RecordBase();
         recordThread.start();
 
-        trackThread = new TrackThread();
+        trackThread = new TrackBase();
         trackThread.start();
 
         udpClient = new UdpClient(ip, port, this::socketReceive);
@@ -171,6 +171,15 @@ public class TalkieManager implements RecordDataCallback, SocketCallback, TrackC
         udpClient = null;
     }
 
+    public void sendHeartBeat(long userId, int needRsp) {
+        RTPPackage rtpPackage = new RTPPackage();
+        rtpPackage.setType(1)
+                .setUserId(userId)
+                .setNeedRsp(needRsp);
+        Log.d(TAG, "------------addRTPPacket" + rtpPackage.toString());
+        udpClient.addRTPPacket(rtpPackage);
+    }
+
     @Override
     public void catchCount(long count) {
 
@@ -197,7 +206,23 @@ public class TalkieManager implements RecordDataCallback, SocketCallback, TrackC
 
     @Override
     public void socketReceive(byte[] data) {
-        startTrack(data);
+        if (20 == data.length){
+            if (DataUtil.checkTokenError(data)){//token error
+                Log.d(TAG, "socketReceive : token error");
+
+            }else{
+                int ip = DataUtil.checkIp(data);
+                if (-1 == ip){//peng
+                    Log.d(TAG, "socketReceive : ------ peng");
+
+                }else {//update ip
+                    Log.d(TAG, "socketReceive : update ip : " + ip);
+
+                }
+            }
+        }else if (36 < data.length){
+            startTrack(data);
+        }
     }
 
 }

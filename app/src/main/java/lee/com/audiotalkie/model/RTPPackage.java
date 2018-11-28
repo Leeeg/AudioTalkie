@@ -12,6 +12,10 @@ import lee.com.audiotalkie.utils.DataUtil;
  */
 public class RTPPackage {
 
+    int type;//0: 语音   1： 心跳
+
+    int needRsp;
+
     int timestamp = (int) (System.currentTimeMillis() / 1000);
 
     short seq;
@@ -25,6 +29,24 @@ public class RTPPackage {
     long targetId;
 
     byte[] opusData;
+
+    public int getType() {
+        return type;
+    }
+
+    public RTPPackage setType(int type) {
+        this.type = type;
+        return this;
+    }
+
+    public int isNeedRsp() {
+        return needRsp;
+    }
+
+    public RTPPackage setNeedRsp(int needRsp) {
+        this.needRsp = needRsp;
+        return this;
+    }
 
     public short getSeq() {
         return seq;
@@ -94,16 +116,6 @@ public class RTPPackage {
         return this;
     }
 
-    public RTPPackage(int timestamp, short seq, int ssrc, long userId, long targetId, byte[] opusData) {
-        this.timestamp = timestamp;
-        this.seq = seq;
-        this.ssrc = ssrc;
-        this.len = (short) opusData.length;
-        this.userId = userId;
-        this.targetId = targetId;
-        this.opusData = opusData;
-    }
-
     public RTPPackage() {
     }
 
@@ -120,7 +132,9 @@ public class RTPPackage {
     @Override
     public String toString() {
         return "RTPPackage{" +
-                "timestamp=" + timestamp +
+                "type=" + type +
+                ", needRsp=" + needRsp +
+                ", timestamp=" + timestamp +
                 ", seq=" + seq +
                 ", ssrc=" + ssrc +
                 ", len=" + len +

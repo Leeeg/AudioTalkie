@@ -26,7 +26,7 @@ import lee.com.audiotalkie.model.RecordConfig;
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 @SuppressLint("LongLogTag")
-public class TrackThread extends Thread implements AudioThread {
+public class TrackBase extends Thread implements BaseAudio {
 
     private final String TAG = "Lee_VoiceManager_TrackThread";
 
@@ -45,7 +45,7 @@ public class TrackThread extends Thread implements AudioThread {
         return blockingDeque.offer(rtpPackage);
     }
 
-    public TrackThread() {
+    public TrackBase() {
         init();
     }
 

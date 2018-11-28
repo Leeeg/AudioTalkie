@@ -18,7 +18,7 @@ import lee.com.audiotalkie.model.RecordConfig;
  * Coder: lee
  */
 @SuppressLint("LongLogTag")
-public class RecordThread extends Thread implements AudioThread {
+public class RecordBase extends Thread implements BaseAudio {
 
     private final String TAG = "Lee_VoiceManager_RecordThread";
 
@@ -34,7 +34,7 @@ public class RecordThread extends Thread implements AudioThread {
         this.recordDataCallback = recordDataCallback;
     }
 
-    public RecordThread() {
+    public RecordBase() {
         init();
     }
 

@@ -5,7 +5,7 @@ package lee.com.audiotalkie.audio;
  * Describe:
  * Coder: lee
  */
-public interface AudioThread {
+public interface BaseAudio {
 
     void init();
 

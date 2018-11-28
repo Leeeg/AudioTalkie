@@ -75,7 +75,9 @@ public class TalkiePresenterImpl implements TalkiePresenter {
         message.what = 0;
         message.obj = "start record";
         handler.sendMessage(message);
-        talkieManager.startRecord();
+//        talkieManager.startRecord();
+
+        talkieManager.sendHeartBeat(3219, 0);
     }
 
     @Override

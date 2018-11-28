@@ -21,4 +21,6 @@ public class Jni {
 
     public static native byte[] getHeaderBytes(int timestamp, short seq, int _ssrc, short len, long _userId, long _targetId);
 
+    public static native byte[] getHeartBytes(int needRsp, long _userId);
+
 }

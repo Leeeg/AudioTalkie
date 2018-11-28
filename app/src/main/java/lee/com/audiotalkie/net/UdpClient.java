@@ -41,10 +41,10 @@ public class UdpClient {
 
 
     public UdpClient(String host, int port, SocketCallback socketCallback) {
-        this.host = "192.168.0.16";
-        this.port = 8887;
-//        this.host = host;
-//        this.port = port;
+//        this.host = "192.168.0.16";
+//        this.port = 8887;
+        this.host = host;
+        this.port = port;
         this.socketCallback = socketCallback;
         Log.e(TAG, "host = " + host + "    port = " + port);
     }
@@ -67,24 +67,24 @@ public class UdpClient {
 
         } catch (SocketException e) {
             e.printStackTrace();
-            Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+            Log.e(TAG, "UdpSendThread : ERROR : " + e);
         } catch (UnknownHostException e) {
             e.printStackTrace();
-            Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+            Log.e(TAG, "UdpSendThread : ERROR : " + e);
         }
 
     }
 
     private void sendUdp(byte[] data) {
-        Log.d(TAG, "on udp send :" + " dataLen = " + data.length + "   count = " + outCount++);
+        Log.d(TAG, "on udp send :" + " dataLen = " + data.length + "   count = " + outCount++ + " ---- >>>>>  ip = " + local.getHostAddress() + "   port = " + port );
         outPacket = new DatagramPacket(data, data.length, local, port);
         try {
             datagramSocket.send(outPacket);
         } catch (IOException e) {
             if (null != e && e.toString().contains("")) {
-                Log.d("UdpClient : ", "sendUdp failed : Network is unreachable !");
+                Log.d(TAG, "sendUdp failed : Network is unreachable !");
             } else {
-                Log.e("UdpClient : ", "sendUdp ERROR : " + e);
+                Log.e(TAG, "sendUdp ERROR : " + e);
                 e.printStackTrace();
             }
         }
@@ -93,7 +93,7 @@ public class UdpClient {
     class UdpSendThread extends Thread {
         @Override
         public void run() {
-            Log.d("UdpClient : ", "UdpSendThread running ------------------ ");
+            Log.d(TAG, "UdpSendThread running ------------------ ");
             RTPPackage rtpPackage;
             byte[] rtpData = null;
             byte[] rtpHeardData;
@@ -101,17 +101,23 @@ public class UdpClient {
                 try {
                     rtpPackage = blockingDeque.takeFirst();
                     if (null != rtpPackage) {
-                        rtpHeardData = Jni.getHeaderBytes(rtpPackage.getTimestamp(),
-                                rtpPackage.getSeq(),
-                                rtpPackage.getSsrc(),
-                                rtpPackage.getLen(),
-                                rtpPackage.getUserId(),
-                                rtpPackage.getTargetId());
-                        Log.d(TAG, "on udp send :" + " heardLen " + rtpHeardData.length + "   payloadLen ： " + rtpPackage.getOpusData().length);
-                        sendUdp(ByteUtil.byteMerger(rtpData, rtpHeardData, rtpPackage.getOpusData()));
+                        if (0 == rtpPackage.getType()){
+                            rtpHeardData = Jni.getHeaderBytes(rtpPackage.getTimestamp(),
+                                    rtpPackage.getSeq(),
+                                    rtpPackage.getSsrc(),
+                                    rtpPackage.getLen(),
+                                    rtpPackage.getUserId(),
+                                    rtpPackage.getTargetId());
+                            Log.d(TAG, "on udp send :" + " heardLen " + rtpHeardData.length + "   payloadLen ： " + rtpPackage.getOpusData().length);
+                            sendUdp(ByteUtil.byteMerger(rtpData, rtpHeardData, rtpPackage.getOpusData()));
+                        }else if (1 == rtpPackage.getType()){
+                            rtpData = Jni.getHeartBytes(rtpPackage.isNeedRsp(), rtpPackage.getUserId());
+                            Log.d(TAG, "on udp send :" + " heart with  isNeedRsp : " + rtpPackage.isNeedRsp());
+                            sendUdp(rtpData);
+                        }
                     }
                 } catch (InterruptedException e) {
-                    Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+                    Log.e(TAG, "UdpSendThread : ERROR : " + e);
                     e.printStackTrace();
                 }
             }
@@ -121,7 +127,7 @@ public class UdpClient {
     class UdpReceiveThread extends Thread {
         @Override
         public void run() {
-            Log.d("UdpClient : ", "UdpReceiveThread running ----------------- ");
+            Log.d(TAG, "UdpReceiveThread running ----------------- ");
 //            try {
 //                WifiManager manager = (WifiManager) TalkieApplication.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 //                manager.createMulticastLock("UDPWifi");
@@ -129,7 +135,7 @@ public class UdpClient {
 //                inDatagramSocket = new DatagramSocket(port);
 //                inDatagramSocket.setBroadcast(true);
 //            } catch (SocketException e) {
-//                Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+//                Log.e(TAG, "UdpSendThread : ERROR : " + e);
 //                e.printStackTrace();
 //            }
             byte[] data;
@@ -144,7 +150,7 @@ public class UdpClient {
                     socketCallback.socketReceive(data);
 
                 } catch (IOException e) {
-                    Log.e("UdpClient : ", "UdpSendThread : ERROR : " + e);
+                    Log.e(TAG, "UdpSendThread : ERROR : " + e);
                     e.printStackTrace();
                 }
             }

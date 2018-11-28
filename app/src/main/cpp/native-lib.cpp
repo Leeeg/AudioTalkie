@@ -3,6 +3,7 @@
 #include <opus.h>
 #include <malloc.h>
 #include <rtp.h>
+#include <heart.h>
 
 extern "C" {
 #include <opus-build.h>
@@ -89,12 +90,29 @@ extern "C"
 JNIEXPORT jbyteArray JNICALL
 Java_lee_com_audiotalkie_Jni_getHeaderBytes(JNIEnv *env, jclass type, jint timestamp, jshort seq, jint _ssrc, jshort len, jlong _userId, jlong _targetId) {
 
-
     char *chars = NULL;
     int char_len = 36;
     chars = new char[char_len + 1];
 
-    capsulation(timestamp, seq, _ssrc, len, _userId, _targetId, chars);
+    capsulationHearder(timestamp, seq, _ssrc, len, _userId, _targetId, chars);
+
+    jbyteArray jbyteArray = env->NewByteArray(char_len);
+
+    env->SetByteArrayRegion(jbyteArray, 0, char_len, reinterpret_cast<const jbyte *>(chars));
+
+    return jbyteArray;
+
+}
+
+extern "C"
+JNIEXPORT jbyteArray JNICALL
+Java_lee_com_audiotalkie_Jni_getHeartBytes(JNIEnv *env, jclass type, jint needRsp, jlong _userId) {
+
+    char *chars = NULL;
+    int char_len = 24;
+    chars = new char[char_len + 1];
+
+    capsulationHeart(needRsp, _userId, chars);
 
     jbyteArray jbyteArray = env->NewByteArray(char_len);
 

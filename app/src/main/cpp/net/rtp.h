@@ -36,7 +36,7 @@ struct RTPExtensionHeader {
     __int64_t targetId;
 };
 
-void capsulation(int _timestamp, short seq, int _ssrc, short len, __int64_t _userId, __int64_t _targetId, char *data);
+void capsulationHearder(int _timestamp, short seq, int _ssrc, short len, __int64_t _userId, __int64_t _targetId, char *data);
 
 void parse();
 
